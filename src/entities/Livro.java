@@ -2,6 +2,7 @@ package entities;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Livro implements Serializable, Comparable<Livro> {
     @Serial
@@ -47,6 +48,18 @@ public class Livro implements Serializable, Comparable<Livro> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Livro livro = (Livro) o;
+        return anoLancamento == livro.anoLancamento && Objects.equals(titulo, livro.titulo) && Objects.equals(autor, livro.autor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(titulo, autor, anoLancamento);
+    }
+
+    @Override
     public String toString() {
         return "Título: " + titulo +
                 "\nAutor: " + autor +
@@ -55,6 +68,6 @@ public class Livro implements Serializable, Comparable<Livro> {
 
     @Override
     public int compareTo(Livro o) {
-        return o.getTitulo().compareTo(this.getTitulo());
+        return o.getTitulo().compareToIgnoreCase(this.getTitulo());
     }
 }

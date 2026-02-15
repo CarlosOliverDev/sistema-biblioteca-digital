@@ -2,6 +2,7 @@ package entities;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Usuario implements Serializable{
     @Serial
@@ -27,6 +28,18 @@ public class Usuario implements Serializable{
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(email, usuario.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(email);
     }
 
     @Override
