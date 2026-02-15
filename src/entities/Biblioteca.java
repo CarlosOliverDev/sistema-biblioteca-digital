@@ -1,31 +1,84 @@
 package entities;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import exceptions.LivroNaoEncontradoException;
+
+import java.util.*;
 
 public class Biblioteca {
-    private final List<Livro> listaLivros;
-    private final List<Usuario> listaUsuarios;
-    private final Map<Livro,Usuario> livrosEmprestados;
+    private final ArrayList<Livro> listaLivros;
+    private final HashMap<String,Usuario> listaUsuarios;
+    private final HashSet<Emprestimo> conjuntoEmprestimo;
 
-    public Biblioteca(List<Livro> listaLivros, List<Usuario> listaUsuarios, Map<Livro, Usuario> livrosEmprestados) {
+    public Biblioteca(ArrayList<Livro> listaLivros, HashMap<String, Usuario> listaUsuarios, HashSet<Emprestimo> conjuntoEmprestimo) {
         this.listaLivros = listaLivros;
         this.listaUsuarios = listaUsuarios;
-        this.livrosEmprestados = livrosEmprestados;
+        this.conjuntoEmprestimo = conjuntoEmprestimo;
     }
 
-    public List<Livro> getListaLivros() {
+    public ArrayList<Livro> getListaLivros() {
         return listaLivros;
     }
-
-    public List<Usuario> getListaUsuarios() {
+    public HashMap<String, Usuario> getListaUsuarios() {
         return listaUsuarios;
     }
-
-    public Map<Livro, Usuario> getLivrosEmprestados() {
-        return livrosEmprestados;
+    public HashSet<Emprestimo> getConjuntoEmprestimo() {
+        return conjuntoEmprestimo;
     }
 
+    public void cadastrarNovoLivro(Livro novoLivro) {
+        if(listaLivros.contains(novoLivro)) {
+            System.out.println("A biblioteca já tem esse livro.\nFoi adicionado outra cópia do livro na biblioteca!");
+        } else {
+            System.out.println("Esse livro foi adicionado na biblioteca!");
+        }
+        listaLivros.add(novoLivro);
+    }
 
+    public void listarTodosLivros() {
+        listaLivros.forEach(this::imprimirDetalhesLivro);
+    }
+
+    public void imprimirDetalhesLivro(Livro livro) {
+        System.out.println("=-=-=-=-=-=");
+        System.out.println("Livro: \n" + livro);
+        if(livro.isEmprestado()) {
+            System.out.println("\nO livro está emprestado.");
+        } else {
+            System.out.println("\nLivro disponível.");
+        }
+        System.out.println("=-=-=-=-=-=");
+    }
+
+    public void buscarLivroPorTitulo(String tituloBuscado) throws LivroNaoEncontradoException {
+        List<Livro> listaFiltrada = listaLivros.stream()
+                .filter(l -> l.getTitulo().toLowerCase().contains(tituloBuscado.toLowerCase()))
+                .toList();
+
+        if(listaFiltrada.isEmpty()) {
+            throw new LivroNaoEncontradoException("Livro não encontrado.\nNão há nenhum livro com esse nome na biblioteca.");
+        }
+        if(listaFiltrada.size() > 1){
+            System.out.println("Foi encontrado alguns livros com esse título:");
+            listaFiltrada.forEach(this::imprimirDetalhesLivro);
+        } else {
+            System.out.println("Foi encontrado 1 livro com esse título:");
+            imprimirDetalhesLivro(listaFiltrada.getFirst());
+        }
+    }
+
+    public void ordenarLivrosPorAnoLancamento() {
+        listaLivros.stream()
+                .sorted(Comparator.comparing(Livro::getAnoLancamento).reversed())
+                .forEach(this::imprimirDetalhesLivro);
+    }
+
+    public void ordenarLivrosPorTitulo() {
+        listaLivros.stream()
+                .sorted()
+                .forEach(this::imprimirDetalhesLivro);
+    }
+
+    public boolean listaLivrosEstaVazia() {
+        return listaLivros.isEmpty();
+    }
 }
