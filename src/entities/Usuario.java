@@ -2,6 +2,7 @@ package entities;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class Usuario implements Serializable{
@@ -10,6 +11,7 @@ public class Usuario implements Serializable{
 
     private String nome;
     private String email;
+    private HashSet<Emprestimo> livrosPegosPorEmprestimo;
 
     public Usuario(String nome, String email) {
         this.nome = nome;
@@ -28,6 +30,25 @@ public class Usuario implements Serializable{
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public HashSet<Emprestimo> getLivrosPegosPorEmprestimo() {
+        return livrosPegosPorEmprestimo;
+    }
+    public void setLivrosPegosPorEmprestimo(HashSet<Emprestimo> livrosPegosPorEmprestimo) {
+        this.livrosPegosPorEmprestimo = livrosPegosPorEmprestimo;
+    }
+
+    public boolean existemLivrosPorEmprestimo() {
+        return !livrosPegosPorEmprestimo.isEmpty();
+    }
+
+    public void adicionarNovoEmprestimo(Emprestimo emprestimo){
+        livrosPegosPorEmprestimo.add(emprestimo);
+    }
+
+    public void devolverEmprestimo(Emprestimo emprestimo) {
+        livrosPegosPorEmprestimo.remove(emprestimo);
     }
 
     @Override

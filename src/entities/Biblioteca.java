@@ -1,5 +1,6 @@
 package entities;
 
+import exceptions.EmailJaExistenteException;
 import exceptions.LivroNaoEncontradoException;
 
 import java.util.*;
@@ -80,5 +81,35 @@ public class Biblioteca {
 
     public boolean listaLivrosEstaVazia() {
         return listaLivros.isEmpty();
+    }
+
+    public void cadastrarNovoUsuario(String novoEmail, Usuario novoUsuario) {
+        System.out.println("Novo usuário cadastrado!");
+        listaUsuarios.put(novoEmail,novoUsuario);
+    }
+
+    public void verificarEmail(String email) throws EmailJaExistenteException {
+        if(listaUsuarios.containsKey(email)) {
+            throw new EmailJaExistenteException("Já existe um usuário utilizando esse email.");
+        }
+    }
+
+    public void listarTodosUsuarios() {
+        listaUsuarios.forEach((email, usuario) -> imprimirDetalhesUsuario(usuario));
+    }
+
+    public void imprimirDetalhesUsuario(Usuario usuario) {
+        System.out.println("=-=-=-=-=-=");
+        System.out.println("Usuário: \n" + usuario);
+        if(usuario.existemLivrosPorEmprestimo()) {
+            System.out.println("\nO usuário tem empréstimos feitos.");
+        } else {
+            System.out.println("\nO usuário ainda não pegou um livro emprestado.");
+        }
+        System.out.println("=-=-=-=-=-=");
+    }
+
+    public boolean listaUsuariosEstaVazia() {
+        return listaUsuarios.isEmpty();
     }
 }
