@@ -43,6 +43,10 @@ public class Usuario implements Serializable{
         return !livrosPegosPorEmprestimo.isEmpty();
     }
 
+    public boolean contemLivro(Livro livro) {
+        return livrosPegosPorEmprestimo.stream().anyMatch(e->e.getLivro().equals(livro));
+    }
+
     public void adicionarNovoEmprestimo(Emprestimo emprestimo){
         livrosPegosPorEmprestimo.add(emprestimo);
     }

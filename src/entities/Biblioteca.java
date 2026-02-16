@@ -1,9 +1,10 @@
 package entities;
 
-import exceptions.EmailJaExistenteException;
-import exceptions.LivroNaoEncontradoException;
+import exceptions.*;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Biblioteca {
     private final ArrayList<Livro> listaLivros;
@@ -111,5 +112,58 @@ public class Biblioteca {
 
     public boolean listaUsuariosEstaVazia() {
         return listaUsuarios.isEmpty();
+    }
+
+    private void verificarLivroEstaEmprestado(Livro livro) throws LivroIndisponivelException {
+        if(livro.isEmprestado()) {
+            throw new LivroIndisponivelException("Esse livro está indisponível para empréstimo.");
+        }
+        System.out.println("Livro disponível para empréstimo!");
+    }
+
+    private void verificarUsuarioTemEsseLivro(Usuario usuario, Livro livro) throws EmprestimoDuplicadoException {
+        if(usuario.contemLivro(livro)) {
+            throw new EmprestimoDuplicadoException("Esse usuário já tem esse livro por empréstimo.");
+        }
+        System.out.println("O usuário pode pegar esse livro por empréstimo!");
+    }
+
+    public void realizarEmprestimo(Emprestimo emprestimo) throws LivroIndisponivelException, EmprestimoDuplicadoException {
+        verificarLivroEstaEmprestado(emprestimo.getLivro());
+        verificarUsuarioTemEsseLivro(emprestimo.getUsuario(),emprestimo.getLivro());
+
+        emprestimo.getLivro().setEmprestado(true);
+        emprestimo.getUsuario().adicionarNovoEmprestimo(emprestimo);
+
+        conjuntoEmprestimo.add(emprestimo);
+        System.out.printf("Foi realizado o empréstimo do livro %s para o usuário %s!\n",emprestimo.getLivro().getTitulo(),emprestimo.getUsuario().getNome());
+    }
+
+    public Emprestimo buscarEmprestimoAtivo(Usuario usuario, Livro livro) {
+        return conjuntoEmprestimo.stream()
+                .filter(e->e.getUsuario().equals(usuario) && e.getLivro().equals(livro) && e.getDiaDevolucao() == null)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void devolverLivro(Emprestimo emprestimo) throws EmprestimoNaoRegistradoException {
+        Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(emprestimo.getUsuario(), emprestimo.getLivro());
+        if(emprestimoOriginal == null) {
+            throw new EmprestimoNaoRegistradoException("Não foi encontrado empréstimo ativo deste livro para este usuário.");
+        }
+        emprestimoOriginal.getLivro().setEmprestado(false);
+        emprestimoOriginal.getUsuario().devolverEmprestimo(emprestimoOriginal);
+        emprestimoOriginal.setDiaDevolucao(LocalDate.now());
+        System.out.println("O livro foi devolvido com sucesso!");
+    }
+
+    public void listarHistoricoEmprestimos() {
+        conjuntoEmprestimo.forEach(this::imprimirDetalheEmprestimos);
+    }
+
+    public void imprimirDetalheEmprestimos(Emprestimo emprestimo) {
+        System.out.println("=-=-=-=-=-=");
+        System.out.println("Usuário: \n" + emprestimo);
+        System.out.println("=-=-=-=-=-=");
     }
 }

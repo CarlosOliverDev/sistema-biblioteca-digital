@@ -37,6 +37,13 @@ public class Emprestimo implements Serializable {
         this.diaDevolucao = diaDevolucao;
     }
 
+    public boolean foiDevolvido() {
+        if(getDiaDevolucao() == null) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean devolveuLivro() {
         return diaDevolucao == null;
     }
