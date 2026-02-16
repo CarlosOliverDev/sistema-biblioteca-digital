@@ -4,6 +4,7 @@ import exceptions.*;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Biblioteca {
     private final ArrayList<Livro> listaLivros;
@@ -26,6 +27,7 @@ public class Biblioteca {
         return conjuntoEmprestimo;
     }
 
+    //Método de Modificação
     public void cadastrarNovoLivro(Livro novoLivro) {
         if(listaLivros.contains(novoLivro)) {
             System.out.println("Foi adicionado outra cópia do livro na biblioteca!");
@@ -83,6 +85,7 @@ public class Biblioteca {
         return listaLivros.isEmpty();
     }
 
+    //Método de Modificação
     public void cadastrarNovoUsuario(String novoEmail, Usuario novoUsuario) {
         System.out.println("Novo usuário cadastrado!");
         listaUsuarios.put(novoEmail,novoUsuario);
@@ -128,6 +131,7 @@ public class Biblioteca {
         System.out.println("O usuário pode pegar esse livro por empréstimo!");
     }
 
+    //Método de Modificação
     public void realizarEmprestimo(Emprestimo emprestimo) throws LivroIndisponivelException, EmprestimoDuplicadoException {
         verificarLivroEstaEmprestado(emprestimo.getLivro());
         verificarUsuarioTemEsseLivro(emprestimo.getUsuario(),emprestimo.getLivro());
@@ -146,6 +150,7 @@ public class Biblioteca {
                 .orElse(null);
     }
 
+    //Método de Modificação
     public void devolverLivro(Emprestimo emprestimo, LocalDate date) throws EmprestimoNaoRegistradoException {
         Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(emprestimo.getUsuario(), emprestimo.getLivro());
         if(emprestimoOriginal == null) {
@@ -168,11 +173,64 @@ public class Biblioteca {
         System.out.println("=-=-=-=-=-=");
     }
 
-    //TODO
-    //Listar apenas livros de determinado autor usando filtro (filter).
-    //Buscar usuários com email específico usando map e filter.
-    //Ordenar livros por ano com sorted e expressões lambda.
-    //Agrupar livros por autor utilizando collectors.
-    //Listar somente os livros que estão disponíveis para empréstimo
-    //Listar somente os livros que estão emprestados
+    public void listarLivrosAutor(String autor) throws AutorNaoEncontradoException {
+        List<Livro> livrosAutor = listaLivros.stream()
+                .filter(l->l.getAutor().equalsIgnoreCase(autor))
+                .toList();
+        if(livrosAutor.isEmpty()) {
+            throw new AutorNaoEncontradoException("Não foi encontrado nenhum livro escrito pelo autor " + autor);
+        } else {
+            System.out.println("Livros de " + autor + " encontrados:");
+            livrosAutor.forEach(this::imprimirDetalhesLivro);
+        }
+    }
+
+    public void buscarEmail(String email) {
+        if(listaUsuarios.containsKey(email)) {
+            System.out.println("Usuário encontrado!");
+            System.out.println(listaUsuarios.get(email));
+        } else {
+            System.out.println("Não foi encontrado nenhum usuário com esse email.");
+            System.out.printf("Email %s disponível para uso.\n",email);
+        }
+    }
+
+    public void agruparLivrosPorAutor() {
+        Map<String, List<Livro>> grupoDeAutores= listaLivros.stream()
+                .collect(Collectors.groupingBy(Livro::getAutor));
+
+        System.out.println("Autores e seus livros:");
+
+        grupoDeAutores.forEach((s, livros) -> {
+            System.out.println("=-=-=-=-=-=");
+            System.out.printf("Autor %s\n",s);
+            System.out.printf("Livros encontrados: %d\n",livros.size());
+            livros.forEach(l-> System.out.println(" | " + l.getTitulo() + " - " + l.getAnoLancamento() + " |"));
+            System.out.println("=-=-=-=-=-=");
+        });
+    }
+
+    public void listarLivrosDisponiveis() {
+        List<Livro> livrosDisponiveis = listaLivros.stream()
+                .filter(l->!l.isEmprestado())
+                .toList();
+        if(livrosDisponiveis.isEmpty()) {
+            System.out.println("Não há livros disponíveis para empréstimo.");
+        } else {
+            System.out.println("Livros Disponíveis:");
+            livrosDisponiveis.forEach(this::imprimirDetalhesLivro);
+        }
+    }
+
+    public void listarLivrosEmprestados() {
+        List<Livro> livrosEmprestados = listaLivros.stream()
+                .filter(Livro::isEmprestado)
+                .toList();
+        if(livrosEmprestados.isEmpty()) {
+            System.out.println("Todos os livros estão disponíveis para empréstimo.");
+        } else {
+            System.out.println("Livros Emprestados:");
+            livrosEmprestados.forEach(this::imprimirDetalhesLivro);
+        }
+    }
 }
