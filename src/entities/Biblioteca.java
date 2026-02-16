@@ -27,7 +27,6 @@ public class Biblioteca {
         return conjuntoEmprestimo;
     }
 
-    //Método de Modificação
     public void cadastrarNovoLivro(Livro novoLivro) {
         if(listaLivros.contains(novoLivro)) {
             System.out.println("Foi adicionado outra cópia do livro na biblioteca!");
@@ -80,13 +79,13 @@ public class Biblioteca {
                 .forEach(this::imprimirDetalhesLivro);
     }
 
-    //TODO utilizar antes de chamar os métodos que percorrem a lista de livros.
     public boolean listaLivrosEstaVazia() {
         return listaLivros.isEmpty();
     }
 
     //Método de Modificação
-    public void cadastrarNovoUsuario(String novoEmail, Usuario novoUsuario) {
+    public void cadastrarNovoUsuario(String novoEmail, Usuario novoUsuario) throws EmailJaExistenteException {
+        verificarEmail(novoEmail);
         System.out.println("Novo usuário cadastrado!");
         listaUsuarios.put(novoEmail,novoUsuario);
     }
@@ -112,7 +111,6 @@ public class Biblioteca {
         System.out.println("=-=-=-=-=-=");
     }
 
-    //TODO utilizar antes de chamar os métodos que percorrem a lista de usuários.
     public boolean listaUsuariosEstaVazia() {
         return listaUsuarios.isEmpty();
     }
@@ -131,7 +129,6 @@ public class Biblioteca {
         System.out.println("O usuário pode pegar esse livro por empréstimo!");
     }
 
-    //Método de Modificação
     public void realizarEmprestimo(Emprestimo emprestimo) throws LivroIndisponivelException, EmprestimoDuplicadoException {
         verificarLivroEstaEmprestado(emprestimo.getLivro());
         verificarUsuarioTemEsseLivro(emprestimo.getUsuario(),emprestimo.getLivro());
@@ -150,19 +147,17 @@ public class Biblioteca {
                 .orElse(null);
     }
 
-    //Método de Modificação
     public void devolverLivro(Emprestimo emprestimo, LocalDate date) throws EmprestimoNaoRegistradoException {
         Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(emprestimo.getUsuario(), emprestimo.getLivro());
         if(emprestimoOriginal == null) {
-            throw new EmprestimoNaoRegistradoException("Não foi encontrado empréstimo ativo deste livro para este usuário.");
+            throw new EmprestimoNaoRegistradoException("Não foi encontrado um empréstimo ativo deste livro para este usuário.");
         }
+        emprestimoOriginal.getUsuario().devolverEmprestimo(emprestimoOriginal, date);
         emprestimoOriginal.getLivro().setEmprestado(false);
-        emprestimoOriginal.getUsuario().devolverEmprestimo(emprestimoOriginal);
         emprestimoOriginal.setDiaDevolucao(date);
         System.out.println("O livro foi devolvido com sucesso!");
     }
 
-    //Desafio 3
     public void listarHistoricoEmprestimos() {
         conjuntoEmprestimo.forEach(this::imprimirDetalheEmprestimos);
     }

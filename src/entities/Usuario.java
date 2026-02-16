@@ -2,6 +2,7 @@ package entities;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -50,10 +51,14 @@ public class Usuario implements Serializable{
     public void adicionarNovoEmprestimo(Emprestimo emprestimo){
         livrosPegosPorEmprestimo.add(emprestimo);
     }
-
-    //TODO Remover empréstimo é um jeito preguiçoso de atualizar o empréstimo.
-    public void devolverEmprestimo(Emprestimo emprestimo) {
-        livrosPegosPorEmprestimo.remove(emprestimo);
+    
+    public void devolverEmprestimo(Emprestimo emprestimo, LocalDate date) {
+        livrosPegosPorEmprestimo.stream()
+                        .filter(e->e.getLivro() == emprestimo.getLivro() && e.getLivro().isEmprestado())
+                                .forEach(e-> {
+                                    e.getLivro().setEmprestado(false);
+                                    e.setDiaDevolucao(date);
+                                } );
     }
 
     @Override
