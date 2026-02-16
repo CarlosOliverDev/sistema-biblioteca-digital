@@ -4,7 +4,6 @@ import exceptions.*;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Biblioteca {
     private final ArrayList<Livro> listaLivros;
@@ -29,7 +28,7 @@ public class Biblioteca {
 
     public void cadastrarNovoLivro(Livro novoLivro) {
         if(listaLivros.contains(novoLivro)) {
-            System.out.println("A biblioteca já tem esse livro.\nFoi adicionado outra cópia do livro na biblioteca!");
+            System.out.println("Foi adicionado outra cópia do livro na biblioteca!");
         } else {
             System.out.println("Esse livro foi adicionado na biblioteca!");
         }
@@ -55,12 +54,11 @@ public class Biblioteca {
         List<Livro> listaFiltrada = listaLivros.stream()
                 .filter(l -> l.getTitulo().toLowerCase().contains(tituloBuscado.toLowerCase()))
                 .toList();
-
         if(listaFiltrada.isEmpty()) {
-            throw new LivroNaoEncontradoException("Livro não encontrado.\nNão há nenhum livro com esse nome na biblioteca.");
+            throw new LivroNaoEncontradoException("\nNenhum livro com esse nome foi encontrado na biblioteca.");
         }
         if(listaFiltrada.size() > 1){
-            System.out.println("Foi encontrado alguns livros com esse título:");
+            System.out.println("Alguns livros com esse título foram encontrados:");
             listaFiltrada.forEach(this::imprimirDetalhesLivro);
         } else {
             System.out.println("Foi encontrado 1 livro com esse título:");
@@ -80,6 +78,7 @@ public class Biblioteca {
                 .forEach(this::imprimirDetalhesLivro);
     }
 
+    //TODO utilizar antes de chamar os métodos que percorrem a lista de livros.
     public boolean listaLivrosEstaVazia() {
         return listaLivros.isEmpty();
     }
@@ -103,13 +102,14 @@ public class Biblioteca {
         System.out.println("=-=-=-=-=-=");
         System.out.println("Usuário: \n" + usuario);
         if(usuario.existemLivrosPorEmprestimo()) {
-            System.out.println("\nO usuário tem empréstimos feitos.");
+            System.out.println("\nO usuário tem empréstimos de livros feitos.");
         } else {
             System.out.println("\nO usuário ainda não pegou um livro emprestado.");
         }
         System.out.println("=-=-=-=-=-=");
     }
 
+    //TODO utilizar antes de chamar os métodos que percorrem a lista de usuários.
     public boolean listaUsuariosEstaVazia() {
         return listaUsuarios.isEmpty();
     }
@@ -146,17 +146,18 @@ public class Biblioteca {
                 .orElse(null);
     }
 
-    public void devolverLivro(Emprestimo emprestimo) throws EmprestimoNaoRegistradoException {
+    public void devolverLivro(Emprestimo emprestimo, LocalDate date) throws EmprestimoNaoRegistradoException {
         Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(emprestimo.getUsuario(), emprestimo.getLivro());
         if(emprestimoOriginal == null) {
             throw new EmprestimoNaoRegistradoException("Não foi encontrado empréstimo ativo deste livro para este usuário.");
         }
         emprestimoOriginal.getLivro().setEmprestado(false);
         emprestimoOriginal.getUsuario().devolverEmprestimo(emprestimoOriginal);
-        emprestimoOriginal.setDiaDevolucao(LocalDate.now());
+        emprestimoOriginal.setDiaDevolucao(date);
         System.out.println("O livro foi devolvido com sucesso!");
     }
 
+    //Desafio 3
     public void listarHistoricoEmprestimos() {
         conjuntoEmprestimo.forEach(this::imprimirDetalheEmprestimos);
     }
@@ -166,4 +167,12 @@ public class Biblioteca {
         System.out.println("Usuário: \n" + emprestimo);
         System.out.println("=-=-=-=-=-=");
     }
+
+    //TODO
+    //Listar apenas livros de determinado autor usando filtro (filter).
+    //Buscar usuários com email específico usando map e filter.
+    //Ordenar livros por ano com sorted e expressões lambda.
+    //Agrupar livros por autor utilizando collectors.
+    //Listar somente os livros que estão disponíveis para empréstimo
+    //Listar somente os livros que estão emprestados
 }

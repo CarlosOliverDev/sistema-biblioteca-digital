@@ -11,11 +11,12 @@ public class Usuario implements Serializable{
 
     private String nome;
     private String email;
-    private HashSet<Emprestimo> livrosPegosPorEmprestimo;
+    private final HashSet<Emprestimo> livrosPegosPorEmprestimo;
 
     public Usuario(String nome, String email) {
         this.nome = nome;
         this.email = email;
+        this.livrosPegosPorEmprestimo = new HashSet<>();
     }
 
     public String getNome() {
@@ -35,22 +36,22 @@ public class Usuario implements Serializable{
     public HashSet<Emprestimo> getLivrosPegosPorEmprestimo() {
         return livrosPegosPorEmprestimo;
     }
-    public void setLivrosPegosPorEmprestimo(HashSet<Emprestimo> livrosPegosPorEmprestimo) {
-        this.livrosPegosPorEmprestimo = livrosPegosPorEmprestimo;
-    }
 
     public boolean existemLivrosPorEmprestimo() {
         return !livrosPegosPorEmprestimo.isEmpty();
     }
 
     public boolean contemLivro(Livro livro) {
-        return livrosPegosPorEmprestimo.stream().anyMatch(e->e.getLivro().equals(livro));
+        return livrosPegosPorEmprestimo.stream()
+                .filter(e->e.getLivro().equals(livro))
+                .anyMatch(e -> !e.foiDevolvido());
     }
 
     public void adicionarNovoEmprestimo(Emprestimo emprestimo){
         livrosPegosPorEmprestimo.add(emprestimo);
     }
 
+    //TODO Remover empréstimo é um jeito preguiçoso de atualizar o empréstimo.
     public void devolverEmprestimo(Emprestimo emprestimo) {
         livrosPegosPorEmprestimo.remove(emprestimo);
     }

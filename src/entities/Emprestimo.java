@@ -44,27 +44,23 @@ public class Emprestimo implements Serializable {
         return true;
     }
 
-    public boolean devolveuLivro() {
-        return diaDevolucao == null;
-    }
-
     public String stringDataDevolucao() {
-        if(devolveuLivro()) {
-            return "";
-        } else
+        if(foiDevolvido()) {
             return "\nDia da Devolução: " + diaDevolucao;
+        }
+        return "";
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Emprestimo that = (Emprestimo) o;
-        return Objects.equals(usuario, that.usuario) && Objects.equals(livro, that.livro);
+        return Objects.equals(usuario, that.usuario) && Objects.equals(livro, that.livro) && Objects.equals(diaEmprestimo, that.diaEmprestimo) && Objects.equals(diaDevolucao, that.diaDevolucao);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(usuario, livro);
+        return Objects.hash(usuario, livro, diaEmprestimo, diaDevolucao);
     }
 
     @Override
