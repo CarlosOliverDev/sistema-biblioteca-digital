@@ -2,6 +2,7 @@ package entities;
 
 import exceptions.*;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,10 +12,10 @@ public class Biblioteca {
     private final HashMap<String,Usuario> listaUsuarios;
     private final HashSet<Emprestimo> conjuntoEmprestimo;
 
-    public Biblioteca(ArrayList<Livro> listaLivros, HashMap<String, Usuario> listaUsuarios, HashSet<Emprestimo> conjuntoEmprestimo) {
-        this.listaLivros = listaLivros;
-        this.listaUsuarios = listaUsuarios;
-        this.conjuntoEmprestimo = conjuntoEmprestimo;
+    public Biblioteca() {
+        this.listaLivros = carregarDadosLivros();
+        this.listaUsuarios = carregarDadosUsuarios();
+        this.conjuntoEmprestimo = carregarDadosEmprestimos();
     }
 
     public ArrayList<Livro> getListaLivros() {
@@ -226,6 +227,48 @@ public class Biblioteca {
         } else {
             System.out.println("Livros Emprestados:");
             livrosEmprestados.forEach(this::imprimirDetalhesLivro);
+        }
+    }
+
+    public ArrayList<Livro> carregarDadosLivros() {
+        try (FileInputStream fileInputStream = new FileInputStream("arquivos/livros.dat");
+             ObjectInputStream ois = new ObjectInputStream(fileInputStream))
+        {
+            ArrayList<Livro> livrosCarregados = (ArrayList<Livro>) ois.readObject();
+            System.out.println("Leitura do arquivo de livros concluído.");
+            return livrosCarregados;
+        } catch(ClassNotFoundException | IOException e) {
+            System.out.println("Não foi encontrado nenhum arquivo dos livros.");
+            System.out.println("Criando nova lista de livros.");
+            return new ArrayList<Livro>();
+        }
+    }
+
+    public HashMap<String,Usuario> carregarDadosUsuarios() {
+        try (FileInputStream fileInputStream = new FileInputStream("arquivos/usuarios.dat");
+             ObjectInputStream ois = new ObjectInputStream(fileInputStream))
+        {
+            HashMap<String,Usuario> usuariosCarregados = (HashMap<String, Usuario>) ois.readObject();
+            System.out.println("Leitura do arquivo de usuários concluído.");
+            return usuariosCarregados;
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Não foi encontrado nenhum arquivo dos usuários.");
+            System.out.println("Criando nova lista de usuários.");
+            return new HashMap<String,Usuario>();
+        }
+    }
+
+    public HashSet<Emprestimo> carregarDadosEmprestimos() {
+        try (FileInputStream fileInputStream = new FileInputStream("arquivos/emprestimos.dat");
+             ObjectInputStream ois = new ObjectInputStream(fileInputStream))
+        {
+            HashSet<Emprestimo> emprestimosCarregados = (HashSet<Emprestimo>) ois.readObject();
+            System.out.println("Leitura do arquivo de empréstimos concluído.");
+            return emprestimosCarregados;
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Não foi encontrado nenhum arquivo dos empréstimos.");
+            System.out.println("Criando nova lista de empréstimos.");
+            return new HashSet<Emprestimo>();
         }
     }
 }
