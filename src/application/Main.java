@@ -209,14 +209,14 @@ public class Main {
                     System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
                     break;
                 }
-                //listarUsuarios();
+                biblioteca.listarTodosUsuarios();
                 break;
             case 3:
                 if(biblioteca.listaUsuariosEstaVazia()) {
                     System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
                     break;
                 }
-                //buscarUsuarioPorEmail();
+                buscarUsuarioPorEmail();
                 break;
             case 4:
                 return;
@@ -225,12 +225,19 @@ public class Main {
         }
     }
 
-    public static void cadastrarNovoUsuario() {
+    public static void cadastrarNovoUsuario() throws EmailJaExistenteException {
         System.out.println("\n-=- Cadastrar um Novo Usuário -=-");
         String nomeUsuario = verificadorStringVazio("Digite o nome do usuário: ");
         String emailUsuario = verificadorEmail("Digite o email do usuário: ");
-        Usuario novoUsuario = new Usuario(nomeUsuario, emailUsuario);
 
+        try {
+            biblioteca.verificarEmail(emailUsuario);
+        } catch(EmailJaExistenteException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        Usuario novoUsuario = new Usuario(nomeUsuario, emailUsuario);
         System.out.println("\n-=- Usuário -=-");
         System.out.println(novoUsuario);
         if(verificarConfirmacao("\nDeseja cadastrar esse usuário na biblioteca? (s/n) ")) {
@@ -238,6 +245,11 @@ public class Main {
         } else {
             System.out.println("Cadastro cancelado.");
         }
+    }
+
+    public static void buscarUsuarioPorEmail() {
+        String emailBusca = verificadorEmail("Digite o email do usuário que deseja buscar: ");
+        biblioteca.buscarEmail(emailBusca);
     }
 
     public static int verificadorInt(String mensagem) {
@@ -281,12 +293,10 @@ public class Main {
                 if(!emailUsuario.contains("@")) {
                     throw new EmailInvalidoException("Email inválido. O endereço deve conter '@'.");
                 }
-                biblioteca.verificarEmail(emailUsuario);
                 return emailUsuario;
-            } catch (EmailJaExistenteException | EmailInvalidoException e) {
+            } catch (EmailInvalidoException e) {
                 System.out.println(e.getMessage() + "\n");
             }
         }
-
     }
 }

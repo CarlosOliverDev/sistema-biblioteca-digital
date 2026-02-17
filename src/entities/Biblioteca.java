@@ -93,7 +93,7 @@ public class Biblioteca {
 
     public void verificarEmail(String email) throws EmailJaExistenteException {
         if(listaUsuarios.containsKey(email)) {
-            throw new EmailJaExistenteException("Já existe um usuário utilizando esse email.\n");
+            throw new EmailJaExistenteException("Já existe um usuário utilizando esse email.");
         }
     }
 
@@ -104,10 +104,11 @@ public class Biblioteca {
     public void imprimirDetalhesUsuario(Usuario usuario) {
         System.out.println("=-=-=-=-=-=");
         System.out.println("Usuário: \n" + usuario);
+        System.out.println("=-=-=-=-=-=");
         if(usuario.existemLivrosPorEmprestimo()) {
-            System.out.println("\nO usuário tem empréstimos de livros feitos.");
+            System.out.println("Usuário tem empréstimos de livros feitos.");
         } else {
-            System.out.println("\nO usuário ainda não pegou um livro emprestado.");
+            System.out.println("Usuário ainda não pegou um livro emprestado.");
         }
         System.out.println("=-=-=-=-=-=");
     }
@@ -183,10 +184,10 @@ public class Biblioteca {
 
     public void buscarEmail(String email) {
         if(listaUsuarios.containsKey(email)) {
-            System.out.println("Usuário encontrado!");
+            System.out.println("\nUsuário encontrado!");
             System.out.println(listaUsuarios.get(email));
         } else {
-            System.out.println("Não foi encontrado nenhum usuário com esse email.");
+            System.out.println("\nNão foi encontrado nenhum usuário com esse email.");
             System.out.printf("Email %s disponível para uso.\n",email);
         }
     }
