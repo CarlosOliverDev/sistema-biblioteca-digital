@@ -2,6 +2,7 @@ package application;
 
 import entities.Biblioteca;
 import entities.Livro;
+import exceptions.AutorNaoEncontradoException;
 import exceptions.StringVaziaException;
 
 import java.util.InputMismatchException;
@@ -62,7 +63,11 @@ public class Main {
                 cadastrarNovoLivro();
                 break;
             case 2:
-                //TODO menuListaLivros();
+                if(biblioteca.listaLivrosEstaVazia()) {
+                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+                    break;
+                }
+                menuListaLivros();
                 break;
             case 3:
                 //TODO ordenarLivros();
@@ -86,7 +91,7 @@ public class Main {
         String autorLivro = verificadorStringVazio("Digite o autor do livro: ");
         int anoLancamentoLivro = verificadorInt("Digite o ano que o livro foi publicado: ");
         Livro novoLivro = new Livro(tituloLivro, autorLivro, anoLancamentoLivro);
-        
+
         System.out.println("\n-=- Livro -=-");
         System.out.println(novoLivro);
         if(verificarConfirmacao("Deseja cadastrar esse livro na biblioteca? (s/n) ")) {
@@ -95,6 +100,49 @@ public class Main {
             System.out.println("Cadastro cancelado.");
         }
     }
+
+    public static void menuListaLivros() {
+        int opcaoUsuario = 0;
+        do {
+            System.out.println("\n-=- Listar os Livros -=-");
+            System.out.println("1- Listar todos os livros\n2- Listar os livros de determinado autor\n3- Listar os livros disponíveis para empréstimos\n4- Listar os livros emprestados\n5- Voltar ao menu de Gestão de livros\n");
+            opcaoUsuario = verificadorInt("Digite uma das opções: ");
+            opcaoMenuListaLivros(opcaoUsuario);
+        } while(opcaoUsuario != 5);
+    }
+
+    public static void opcaoMenuListaLivros(int opcaoUsuario) {
+        switch(opcaoUsuario) {
+            case 1:
+                biblioteca.listarTodosLivros();
+                break;
+            case 2:
+                listarLivrosAutor();
+                break;
+            case 3:
+                biblioteca.listarLivrosDisponiveis();
+                break;
+            case 4:
+                biblioteca.listarLivrosEmprestados();
+                break;
+            case 5:
+                return;
+            default:
+                System.out.println("Opção inválida, tente novamente.");
+        }
+    }
+
+    public static void listarLivrosAutor() {
+        System.out.println("\n-=- Listar os Livros do Autor -=-");
+        String autorLivro = verificadorStringVazio("Digite o autor dos livros: ");
+        try {
+            biblioteca.listarLivrosAutor(autorLivro);
+        } catch(AutorNaoEncontradoException e ) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
 
     public static int verificadorInt(String mensagem) {
         while(true) {

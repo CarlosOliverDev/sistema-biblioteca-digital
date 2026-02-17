@@ -42,12 +42,13 @@ public class Biblioteca {
     }
 
     public void imprimirDetalhesLivro(Livro livro) {
+        System.out.println("\n=-=-=Livro=-=-=");
+        System.out.println(livro);
         System.out.println("=-=-=-=-=-=");
-        System.out.println("Livro: \n" + livro);
         if(livro.isEmprestado()) {
-            System.out.println("\nO livro está emprestado.");
+            System.out.println("Livro está emprestado.");
         } else {
-            System.out.println("\nLivro disponível.");
+            System.out.println("Livro disponível para empréstimo.");
         }
         System.out.println("=-=-=-=-=-=");
     }
@@ -173,9 +174,9 @@ public class Biblioteca {
                 .filter(l->l.getAutor().equalsIgnoreCase(autor))
                 .toList();
         if(livrosAutor.isEmpty()) {
-            throw new AutorNaoEncontradoException("Não foi encontrado nenhum livro escrito pelo autor " + autor);
+            throw new AutorNaoEncontradoException("Não foi encontrado nenhum livro escrito pelo autor " + autor + ".");
         } else {
-            System.out.println("Livros de " + autor + " encontrados:");
+            System.out.println("\nLivros de " + autor + " encontrados:");
             livrosAutor.forEach(this::imprimirDetalhesLivro);
         }
     }
