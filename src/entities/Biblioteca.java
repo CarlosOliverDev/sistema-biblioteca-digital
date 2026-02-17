@@ -195,13 +195,14 @@ public class Biblioteca {
         Map<String, List<Livro>> grupoDeAutores= listaLivros.stream()
                 .collect(Collectors.groupingBy(Livro::getAutor));
 
-        System.out.println("Autores e seus livros:");
+        System.out.println("\nAutores e seus livros:");
 
         grupoDeAutores.forEach((s, livros) -> {
-            System.out.println("=-=-=-=-=-=");
-            System.out.printf("Autor %s\n",s);
+            System.out.println("\n=-=-=-=-=-=");
+            System.out.printf("Autor: %s\n",s);
             System.out.printf("Livros encontrados: %d\n",livros.size());
-            livros.forEach(l-> System.out.println(" | " + l.getTitulo() + " - " + l.getAnoPublicado() + " |"));
+            System.out.println("=-=-=-=-=-=");
+            livros.forEach(l-> System.out.println(l.getTitulo() + " | " + l.getAnoPublicado()));
             System.out.println("=-=-=-=-=-=");
         });
     }

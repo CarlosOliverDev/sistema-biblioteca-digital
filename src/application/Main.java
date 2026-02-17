@@ -89,7 +89,7 @@ public class Main {
                     System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
                     break;
                 }
-                //TODO agruparLivrosAutores();
+                biblioteca.agruparLivrosPorAutor();
                 break;
             case 6:
                 return;
