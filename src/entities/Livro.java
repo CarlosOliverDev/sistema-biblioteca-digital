@@ -68,6 +68,6 @@ public class Livro implements Serializable, Comparable<Livro> {
 
     @Override
     public int compareTo(Livro o) {
-        return o.getTitulo().compareToIgnoreCase(this.getTitulo());
+        return this.getTitulo().compareToIgnoreCase(o.getTitulo());
     }
 }

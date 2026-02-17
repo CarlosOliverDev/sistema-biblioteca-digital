@@ -21,7 +21,7 @@ public class Main {
         int opcaoUsuario = 0;
         do {
             System.out.println("\n-=- Menu Principal -=-");
-            System.out.println("1- Gestão de Livros\n2- Gestão de Usuários\n3- Empréstimos\n4- Salvar e sair\n");
+            System.out.println("1- Gestão de Livros.\n2- Gestão de Usuários.\n3- Empréstimos.\n4- Salvar e sair.\n");
             opcaoUsuario = verificadorInt("Digite uma das opções: ");
             opcaoMenuPrincipal(opcaoUsuario);
         } while(opcaoUsuario != 4);
@@ -51,7 +51,7 @@ public class Main {
         int opcaoUsuario = 0;
         do {
             System.out.println("\n-=- Gestão dos Livros -=-");
-            System.out.println("1- Cadastrar um Novo Livro\n2- Listar os Livros\n3- Ordenar os Livros\n4- Buscar um Livro pelo Título\n5- Agrupar Livros por Autores\n6- Voltar ao Menu Principal\n");
+            System.out.println("1- Cadastrar um Novo Livro.\n2- Listar os Livros.\n3- Ordenar os Livros.\n4- Buscar um Livro pelo Título.\n5- Agrupar Livros por Autores.\n6- Voltar ao Menu Principal.\n");
             opcaoUsuario = verificadorInt("Digite uma das opções: ");
             opcaoMenuGestaoLivros(opcaoUsuario);
         } while(opcaoUsuario != 6);
@@ -70,12 +70,24 @@ public class Main {
                 menuListaLivros();
                 break;
             case 3:
-                //TODO ordenarLivros();
+                if(biblioteca.listaLivrosEstaVazia()) {
+                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+                    break;
+                }
+                ordenarLivros();
                 break;
             case 4:
+                if(biblioteca.listaLivrosEstaVazia()) {
+                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+                    break;
+                }
                 //TODO buscarLivroComTitulo();
                 break;
             case 5:
+                if(biblioteca.listaLivrosEstaVazia()) {
+                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+                    break;
+                }
                 //TODO agruparLivrosAutores();
                 break;
             case 6:
@@ -105,7 +117,7 @@ public class Main {
         int opcaoUsuario = 0;
         do {
             System.out.println("\n-=- Listar os Livros -=-");
-            System.out.println("1- Listar todos os livros\n2- Listar os livros de determinado autor\n3- Listar os livros disponíveis para empréstimos\n4- Listar os livros emprestados\n5- Voltar ao menu de Gestão de livros\n");
+            System.out.println("1- Listar todos os livros.\n2- Listar os livros de determinado autor.\n3- Listar os livros disponíveis para empréstimos.\n4- Listar os livros emprestados.\n5- Voltar ao menu de Gestão de livros.\n");
             opcaoUsuario = verificadorInt("Digite uma das opções: ");
             opcaoMenuListaLivros(opcaoUsuario);
         } while(opcaoUsuario != 5);
@@ -142,7 +154,30 @@ public class Main {
         }
     }
 
+    public static void ordenarLivros() {
+        int opcaoUsuario = 0;
+        do {
+            System.out.println("\n-=- Ordenar os Livros -=-");
+            System.out.println("1- Ordenar livros por ano de publicação.\n2- Ordenar livros por título.\n3- Voltar ao menu de Gestão de livros.\n");
+            opcaoUsuario = verificadorInt("Digite uma das opções: ");
+            opcaoOrdenarLivros(opcaoUsuario);
+        } while(opcaoUsuario != 3);
+    }
 
+    public static void opcaoOrdenarLivros(int opcaoUsuario) {
+        switch(opcaoUsuario) {
+            case 1:
+                biblioteca.ordenarLivrosPorAnoLancamento();
+                break;
+            case 2:
+                biblioteca.ordenarLivrosPorTitulo();
+                break;
+            case 3:
+                return;
+            default:
+                System.out.println("Opção inválida, tente novamente.");
+        }
+    }
 
     public static int verificadorInt(String mensagem) {
         while(true) {
@@ -175,9 +210,6 @@ public class Main {
 
     public static boolean verificarConfirmacao(String mensagem) {
         String opcaoUsuario = verificadorStringVazio(mensagem);
-        if(opcaoUsuario.toLowerCase().charAt(0) == 's') {
-            return true;
-        }
-        return false;
+        return opcaoUsuario.toLowerCase().charAt(0) == 's';
     }
 }
