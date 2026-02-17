@@ -231,6 +231,7 @@ public class Biblioteca {
     }
 
     public ArrayList<Livro> carregarDadosLivros() {
+        System.out.println("Carregando arquivo de livros...");
         try (FileInputStream fileInputStream = new FileInputStream("arquivos/livros.dat");
              ObjectInputStream ois = new ObjectInputStream(fileInputStream))
         {
@@ -245,6 +246,7 @@ public class Biblioteca {
     }
 
     public HashMap<String,Usuario> carregarDadosUsuarios() {
+        System.out.println("Carregando arquivo de usuários...");
         try (FileInputStream fileInputStream = new FileInputStream("arquivos/usuarios.dat");
              ObjectInputStream ois = new ObjectInputStream(fileInputStream))
         {
@@ -259,6 +261,7 @@ public class Biblioteca {
     }
 
     public HashSet<Emprestimo> carregarDadosEmprestimos() {
+        System.out.println("Carregando arquivo de empréstimos...");
         try (FileInputStream fileInputStream = new FileInputStream("arquivos/emprestimos.dat");
              ObjectInputStream ois = new ObjectInputStream(fileInputStream))
         {
@@ -269,6 +272,45 @@ public class Biblioteca {
             System.out.println("Não foi encontrado nenhum arquivo dos empréstimos.");
             System.out.println("Criando nova lista de empréstimos.");
             return new HashSet<Emprestimo>();
+        }
+    }
+
+    public void salvarDadosLivros() {
+        System.out.println("Salvando arquivo de livros...");
+        try (FileOutputStream fileOutputStream = new FileOutputStream("arquivos/livros.dat");
+            ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
+        {
+            oos.writeObject(listaLivros);
+            System.out.println("Livros salvos com sucesso!");
+        } catch (IOException e) {
+            System.out.println("Erro: Falha em salvar os livros no arquivo.");
+            System.out.println("Motivo: " + e.getMessage());
+        }
+    }
+
+    public void salvarDadosUsuarios() {
+        System.out.println("Salvando arquivo de usuários...");
+        try (FileOutputStream fileOutputStream = new FileOutputStream("arquivos/usuarios.dat");
+             ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
+        {
+            oos.writeObject(listaUsuarios);
+            System.out.println("Usuários salvos com sucesso!");
+        } catch (IOException e) {
+            System.out.println("Erro: Falha em salvar os usuários no arquivo.");
+            System.out.println("Motivo: " + e.getMessage());
+        }
+    }
+
+    public void salvarDadosEmprestimos() {
+        System.out.println("Salvando arquivo de empréstimos...");
+        try (FileOutputStream fileOutputStream = new FileOutputStream("arquivos/emprestimos.dat");
+             ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
+        {
+            oos.writeObject(conjuntoEmprestimo);
+            System.out.println("Empréstimos salvos com sucesso!");
+        } catch (IOException e) {
+            System.out.println("Erro: Falha em salvar os empréstimos no arquivo.");
+            System.out.println("Motivo: " + e.getMessage());
         }
     }
 }
