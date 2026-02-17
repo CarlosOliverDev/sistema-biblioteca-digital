@@ -85,15 +85,15 @@ public class Biblioteca {
         return listaLivros.isEmpty();
     }
 
-    public void cadastrarNovoUsuario(String novoEmail, Usuario novoUsuario) throws EmailJaExistenteException {
-        verificarEmail(novoEmail);
+    public void cadastrarNovoUsuario(Usuario novoUsuario) throws EmailJaExistenteException {
+        verificarEmail(novoUsuario.getEmail());
         System.out.println("Novo usuário cadastrado!");
-        listaUsuarios.put(novoEmail,novoUsuario);
+        listaUsuarios.put(novoUsuario.getEmail(),novoUsuario);
     }
 
     public void verificarEmail(String email) throws EmailJaExistenteException {
         if(listaUsuarios.containsKey(email)) {
-            throw new EmailJaExistenteException("Já existe um usuário utilizando esse email.");
+            throw new EmailJaExistenteException("Já existe um usuário utilizando esse email.\n");
         }
     }
 

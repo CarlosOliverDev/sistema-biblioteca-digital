@@ -2,9 +2,8 @@ package application;
 
 import entities.Biblioteca;
 import entities.Livro;
-import exceptions.AutorNaoEncontradoException;
-import exceptions.LivroNaoEncontradoException;
-import exceptions.StringVaziaException;
+import entities.Usuario;
+import exceptions.*;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -36,7 +35,7 @@ public class Main {
                 menuGestaoLivros();
                 break;
             case 2:
-                //TODO menuGestaoUsuarios();
+                menuGestaoUsuarios();
                 break;
             case 3:
                 //TODO menuEmprestimos();
@@ -190,6 +189,57 @@ public class Main {
         }
     }
 
+    public static void menuGestaoUsuarios() {
+        int opcaoUsuario = 0;
+        do {
+            System.out.println("\n-=- Gestão dos Usuários -=-");
+            System.out.println("1- Cadastrar um Novo Usuário.\n2- Listar os Usuários.\n3- Buscar um Usuário pelo Email.\n4- Voltar ao Menu Principal.\n");
+            opcaoUsuario = verificadorInt("Digite uma das opções: ");
+            opcaoMenuGestaoUsuarios(opcaoUsuario);
+        } while(opcaoUsuario != 4);
+    }
+
+    public static void opcaoMenuGestaoUsuarios(int opcaoUsuario) {
+        switch(opcaoUsuario) {
+            case 1:
+                cadastrarNovoUsuario();
+                break;
+            case 2:
+                if(biblioteca.listaUsuariosEstaVazia()) {
+                    System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
+                    break;
+                }
+                //listarUsuarios();
+                break;
+            case 3:
+                if(biblioteca.listaUsuariosEstaVazia()) {
+                    System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
+                    break;
+                }
+                //buscarUsuarioPorEmail();
+                break;
+            case 4:
+                return;
+            default:
+                System.out.println("Opção inválida, tente novamente.");
+        }
+    }
+
+    public static void cadastrarNovoUsuario() {
+        System.out.println("\n-=- Cadastrar um Novo Usuário -=-");
+        String nomeUsuario = verificadorStringVazio("Digite o nome do usuário: ");
+        String emailUsuario = verificadorEmail("Digite o email do usuário: ");
+        Usuario novoUsuario = new Usuario(nomeUsuario, emailUsuario);
+
+        System.out.println("\n-=- Usuário -=-");
+        System.out.println(novoUsuario);
+        if(verificarConfirmacao("\nDeseja cadastrar esse usuário na biblioteca? (s/n) ")) {
+            biblioteca.cadastrarNovoUsuario(novoUsuario);
+        } else {
+            System.out.println("Cadastro cancelado.");
+        }
+    }
+
     public static int verificadorInt(String mensagem) {
         while(true) {
             try {
@@ -210,11 +260,11 @@ public class Main {
                 System.out.print(mensagem);
                 String stringUsuario = scanner.nextLine();
                 if(stringUsuario.isEmpty()) {
-                    throw new StringVaziaException("Não é possível deixar esse campo vazio.\n");
+                    throw new StringVaziaException("Não é possível deixar esse campo vazio.");
                 }
                 return stringUsuario;
             } catch(StringVaziaException e) {
-                System.out.println(e.getMessage());
+                System.out.println(e.getMessage() + "\n");
             }
         }
     }
@@ -222,5 +272,21 @@ public class Main {
     public static boolean verificarConfirmacao(String mensagem) {
         String opcaoUsuario = verificadorStringVazio(mensagem);
         return opcaoUsuario.toLowerCase().charAt(0) == 's';
+    }
+
+    public static String verificadorEmail(String mensagem) {
+        while(true) {
+            try {
+                String emailUsuario = verificadorStringVazio(mensagem);
+                if(!emailUsuario.contains("@")) {
+                    throw new EmailInvalidoException("Email inválido. O endereço deve conter '@'.");
+                }
+                biblioteca.verificarEmail(emailUsuario);
+                return emailUsuario;
+            } catch (EmailJaExistenteException | EmailInvalidoException e) {
+                System.out.println(e.getMessage() + "\n");
+            }
+        }
+
     }
 }
