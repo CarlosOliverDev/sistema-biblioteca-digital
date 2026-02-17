@@ -61,10 +61,10 @@ public class Biblioteca {
             throw new LivroNaoEncontradoException("\nNenhum livro com esse nome foi encontrado na biblioteca.");
         }
         if(listaFiltrada.size() > 1){
-            System.out.println("Alguns livros com esse título foram encontrados:");
+            System.out.println("\nAlguns livros com esse título foram encontrados:");
             listaFiltrada.forEach(this::imprimirDetalhesLivro);
         } else {
-            System.out.println("Foi encontrado 1 livro com esse título:");
+            System.out.println("\nFoi encontrado 1 livro com esse título:");
             imprimirDetalhesLivro(listaFiltrada.getFirst());
         }
     }

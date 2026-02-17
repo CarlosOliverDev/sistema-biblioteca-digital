@@ -3,6 +3,7 @@ package application;
 import entities.Biblioteca;
 import entities.Livro;
 import exceptions.AutorNaoEncontradoException;
+import exceptions.LivroNaoEncontradoException;
 import exceptions.StringVaziaException;
 
 import java.util.InputMismatchException;
@@ -81,7 +82,7 @@ public class Main {
                     System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
                     break;
                 }
-                //TODO buscarLivroComTitulo();
+                buscarLivroPorTitulo();
                 break;
             case 5:
                 if(biblioteca.listaLivrosEstaVazia()) {
@@ -106,7 +107,7 @@ public class Main {
 
         System.out.println("\n-=- Livro -=-");
         System.out.println(novoLivro);
-        if(verificarConfirmacao("Deseja cadastrar esse livro na biblioteca? (s/n) ")) {
+        if(verificarConfirmacao("\nDeseja cadastrar esse livro na biblioteca? (s/n) ")) {
             biblioteca.cadastrarNovoLivro(novoLivro);
         } else {
             System.out.println("Cadastro cancelado.");
@@ -176,6 +177,16 @@ public class Main {
                 return;
             default:
                 System.out.println("Opção inválida, tente novamente.");
+        }
+    }
+
+    public static void buscarLivroPorTitulo() {
+        System.out.println("\n-=- Buscar Livro por Título -=-");
+        String tituloLivro = verificadorStringVazio("Digite o título do livro: ");
+        try {
+            biblioteca.buscarLivroPorTitulo(tituloLivro);
+        } catch(LivroNaoEncontradoException e ) {
+            System.out.println(e.getMessage());
         }
     }
 
