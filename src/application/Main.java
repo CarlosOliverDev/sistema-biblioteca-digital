@@ -25,7 +25,7 @@ public class Main {
             opcaoUsuario = verificadorInt("Digite uma das opções: ");
             opcaoMenuPrincipal(opcaoUsuario);
         } while(opcaoUsuario != 4);
-        //biblioteca.salvarTodosDados();
+        biblioteca.salvarTodosDados();
         scanner.close();
     }
 
@@ -38,7 +38,7 @@ public class Main {
                 menuGestaoUsuarios();
                 break;
             case 3:
-                //TODO menuEmprestimos();
+                menuEmprestimos();
                 break;
             case 4:
                 return;
@@ -250,6 +250,54 @@ public class Main {
     public static void buscarUsuarioPorEmail() {
         String emailBusca = verificadorEmail("Digite o email do usuário que deseja buscar: ");
         biblioteca.buscarEmail(emailBusca);
+    }
+
+    public static void menuEmprestimos() {
+        int opcaoUsuario = 0;
+        do {
+            System.out.println("\n-=- Empréstimos -=-");
+            System.out.println("1- Realizar Empréstimo.\n2- Devolver livro.\n3- Mostrar Histórico de Empréstimos.\n4- Voltar ao Menu Principal.\n");
+            opcaoUsuario = verificadorInt("Digite uma das opções: ");
+            opcaoMenuEmprestimos(opcaoUsuario);
+        } while(opcaoUsuario != 4);
+    }
+
+    public static void opcaoMenuEmprestimos(int opcaoUsuario) {
+        switch(opcaoUsuario) {
+            case 1:
+                if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
+                    System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Não é possível realizar um empréstimo.");
+                    break;
+                }
+                realizarEmprestimo();
+                break;
+            case 2:
+                if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
+                    System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Não é possível realizar uma devolução.");
+                    break;
+                }
+                System.out.println("TODO");
+                //TODO realizarDevolucao();
+                break;
+            case 3:
+                if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
+                    System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Também não há empréstimos já realizados.");
+                } else if(biblioteca.conjuntoEmprestimosEstaVazia()) {
+                    System.out.println("Não há nenhum empréstimo registrado na livraria.");
+                } else {
+                    biblioteca.listarHistoricoEmprestimos();
+                }
+                break;
+            case 4:
+                return;
+            default:
+                System.out.println("Opção inválida, tente novamente.");
+        }
+    }
+
+    public static void realizarEmprestimo() {
+        System.out.println("\n-=- Realizar Empréstimo -=-");
+        System.out.println("TODO");
     }
 
     public static int verificadorInt(String mensagem) {

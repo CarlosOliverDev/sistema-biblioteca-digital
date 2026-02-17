@@ -149,6 +149,7 @@ public class Biblioteca {
                 .orElse(null);
     }
 
+    //TODO vou ter q mudar esse método para receber um livro e um usuário
     public void devolverLivro(Emprestimo emprestimo, LocalDate date) throws EmprestimoNaoRegistradoException {
         Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(emprestimo.getUsuario(), emprestimo.getLivro());
         if(emprestimoOriginal == null) {
@@ -158,6 +159,10 @@ public class Biblioteca {
         emprestimoOriginal.getLivro().setEmprestado(false);
         emprestimoOriginal.setDiaDevolucao(date);
         System.out.println("O livro foi devolvido com sucesso!");
+    }
+
+    public boolean conjuntoEmprestimosEstaVazia() {
+        return conjuntoEmprestimo.isEmpty();
     }
 
     public void listarHistoricoEmprestimos() {
@@ -280,7 +285,7 @@ public class Biblioteca {
     private void salvarDadosLivros() {
         System.out.println("Salvando arquivo de livros...");
         try (FileOutputStream fileOutputStream = new FileOutputStream("arquivos/livros.dat");
-            ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
+             ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
         {
             oos.writeObject(listaLivros);
             System.out.println("Livros salvos com sucesso!");
@@ -319,6 +324,6 @@ public class Biblioteca {
     public void salvarTodosDados() {
         salvarDadosLivros();
         salvarDadosUsuarios();
-        salvarDadosEmprestimos();
+        //salvarDadosEmprestimos();
     }
 }
