@@ -10,13 +10,13 @@ public class Livro implements Serializable, Comparable<Livro> {
 
     private String titulo;
     private String autor;
-    private int anoLancamento;
+    private int anoPublicado;
     private boolean emprestado = false;
 
-    public Livro(int anoLancamento, String autor, String titulo) {
-        this.anoLancamento = anoLancamento;
-        this.autor = autor;
+    public Livro(String titulo, String autor, int anoPublicado) {
         this.titulo = titulo;
+        this.autor = autor;
+        this.anoPublicado = anoPublicado;
     }
 
     public String getTitulo() {
@@ -33,11 +33,11 @@ public class Livro implements Serializable, Comparable<Livro> {
         this.autor = autor;
     }
 
-    public int getAnoLancamento() {
-        return anoLancamento;
+    public int getAnoPublicado() {
+        return anoPublicado;
     }
-    public void setAnoLancamento(int anoLancamento) {
-        this.anoLancamento = anoLancamento;
+    public void setAnoPublicado(int anoPublicado) {
+        this.anoPublicado = anoPublicado;
     }
 
     public boolean isEmprestado() {
@@ -51,19 +51,19 @@ public class Livro implements Serializable, Comparable<Livro> {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Livro livro = (Livro) o;
-        return anoLancamento == livro.anoLancamento && Objects.equals(titulo, livro.titulo) && Objects.equals(autor, livro.autor);
+        return anoPublicado == livro.anoPublicado && Objects.equals(titulo, livro.titulo) && Objects.equals(autor, livro.autor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(titulo, autor, anoLancamento);
+        return Objects.hash(titulo, autor, anoPublicado);
     }
 
     @Override
     public String toString() {
         return "Título: " + titulo +
                 "\nAutor: " + autor +
-                "\nAno de Lançamento: " + anoLancamento;
+                "\nAno de Publicação: " + anoPublicado;
     }
 
     @Override

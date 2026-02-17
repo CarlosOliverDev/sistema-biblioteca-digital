@@ -70,7 +70,7 @@ public class Biblioteca {
 
     public void ordenarLivrosPorAnoLancamento() {
         listaLivros.stream()
-                .sorted(Comparator.comparing(Livro::getAnoLancamento).reversed())
+                .sorted(Comparator.comparing(Livro::getAnoPublicado).reversed())
                 .forEach(this::imprimirDetalhesLivro);
     }
 
@@ -200,7 +200,7 @@ public class Biblioteca {
             System.out.println("=-=-=-=-=-=");
             System.out.printf("Autor %s\n",s);
             System.out.printf("Livros encontrados: %d\n",livros.size());
-            livros.forEach(l-> System.out.println(" | " + l.getTitulo() + " - " + l.getAnoLancamento() + " |"));
+            livros.forEach(l-> System.out.println(" | " + l.getTitulo() + " - " + l.getAnoPublicado() + " |"));
             System.out.println("=-=-=-=-=-=");
         });
     }
