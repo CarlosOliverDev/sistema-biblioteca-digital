@@ -84,7 +84,6 @@ public class Biblioteca {
         return listaLivros.isEmpty();
     }
 
-    //Método de Modificação
     public void cadastrarNovoUsuario(String novoEmail, Usuario novoUsuario) throws EmailJaExistenteException {
         verificarEmail(novoEmail);
         System.out.println("Novo usuário cadastrado!");
@@ -230,7 +229,7 @@ public class Biblioteca {
         }
     }
 
-    public ArrayList<Livro> carregarDadosLivros() {
+    private ArrayList<Livro> carregarDadosLivros() {
         System.out.println("Carregando arquivo de livros...");
         try (FileInputStream fileInputStream = new FileInputStream("arquivos/livros.dat");
              ObjectInputStream ois = new ObjectInputStream(fileInputStream))
@@ -245,7 +244,7 @@ public class Biblioteca {
         }
     }
 
-    public HashMap<String,Usuario> carregarDadosUsuarios() {
+    private HashMap<String,Usuario> carregarDadosUsuarios() {
         System.out.println("Carregando arquivo de usuários...");
         try (FileInputStream fileInputStream = new FileInputStream("arquivos/usuarios.dat");
              ObjectInputStream ois = new ObjectInputStream(fileInputStream))
@@ -260,7 +259,7 @@ public class Biblioteca {
         }
     }
 
-    public HashSet<Emprestimo> carregarDadosEmprestimos() {
+    private HashSet<Emprestimo> carregarDadosEmprestimos() {
         System.out.println("Carregando arquivo de empréstimos...");
         try (FileInputStream fileInputStream = new FileInputStream("arquivos/emprestimos.dat");
              ObjectInputStream ois = new ObjectInputStream(fileInputStream))
@@ -275,7 +274,7 @@ public class Biblioteca {
         }
     }
 
-    public void salvarDadosLivros() {
+    private void salvarDadosLivros() {
         System.out.println("Salvando arquivo de livros...");
         try (FileOutputStream fileOutputStream = new FileOutputStream("arquivos/livros.dat");
             ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
@@ -288,7 +287,7 @@ public class Biblioteca {
         }
     }
 
-    public void salvarDadosUsuarios() {
+    private void salvarDadosUsuarios() {
         System.out.println("Salvando arquivo de usuários...");
         try (FileOutputStream fileOutputStream = new FileOutputStream("arquivos/usuarios.dat");
              ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
@@ -301,7 +300,7 @@ public class Biblioteca {
         }
     }
 
-    public void salvarDadosEmprestimos() {
+    private void salvarDadosEmprestimos() {
         System.out.println("Salvando arquivo de empréstimos...");
         try (FileOutputStream fileOutputStream = new FileOutputStream("arquivos/emprestimos.dat");
              ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream))
@@ -312,5 +311,11 @@ public class Biblioteca {
             System.out.println("Erro: Falha em salvar os empréstimos no arquivo.");
             System.out.println("Motivo: " + e.getMessage());
         }
+    }
+
+    public void salvarTodosDados() {
+        salvarDadosLivros();
+        salvarDadosUsuarios();
+        salvarDadosEmprestimos();
     }
 }
