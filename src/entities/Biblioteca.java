@@ -155,7 +155,7 @@ public class Biblioteca {
     }
 
     public void imprimirDetalhesUsuario(Usuario usuario) {
-        System.out.println("=-=-=-=-=-=");
+        System.out.println("\n=-=-=-=-=-=");
         System.out.println("Usuário: \n" + usuario);
         System.out.println("=-=-=-=-=-=");
         if(usuario.existemLivrosPorEmprestimo()) {
@@ -259,7 +259,6 @@ public class Biblioteca {
     }
 
     public void listarHistoricoEmprestimos() {
-        System.out.println("-=- Histórico de Empréstimos -=-");
         conjuntoEmprestimo.forEach(this::imprimirDetalheEmprestimos);
     }
 
@@ -272,8 +271,6 @@ public class Biblioteca {
     public boolean conjuntoEmprestimosEstaVazia() {
         return conjuntoEmprestimo.isEmpty();
     }
-    //TODO Emprestimos
-
 
     private ArrayList<Livro> carregarDadosLivros() {
         System.out.println("Carregando arquivo de livros...");
@@ -360,6 +357,10 @@ public class Biblioteca {
     }
 
     public void salvarTodosDados() {
+        File diretorio = new File("arquivos");
+        if (!diretorio.exists()) {
+            diretorio.mkdirs();
+        }
         salvarDadosLivros();
         salvarDadosUsuarios();
         salvarDadosEmprestimos();

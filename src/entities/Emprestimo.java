@@ -3,6 +3,7 @@ package entities;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Emprestimo implements Serializable {
@@ -46,7 +47,7 @@ public class Emprestimo implements Serializable {
 
     public String stringDataDevolucao() {
         if(foiDevolvido()) {
-            return "\nDia da Devolução: " + diaDevolucao;
+            return "\nDia da Devolução: " + diaDevolucao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         }
         return "";
     }
@@ -67,9 +68,9 @@ public class Emprestimo implements Serializable {
 
     @Override
     public String toString() {
-        return  usuario +
-                "\n" + livro +
-                "\nDia do Empréstimo: " + diaEmprestimo +
+        return  "-=-Usuário-=-\n" + usuario +
+                "\n-=-Livro-=-\n" + livro +
+                "\n-=-Datas-=-\nDia do Empréstimo: " + diaEmprestimo.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) +
                 stringDataDevolucao();
     }
 }
