@@ -94,9 +94,10 @@ public class Main {
             try {
                 biblioteca.cadastrarNovoLivro(novoLivro);
             } catch (LivroJaExisteException e) {
-                System.out.println("Erro: " + e.getMessage());
-                System.out.println("Cadastro cancelado.");
+                System.out.println("Erro: " + e.getMessage() + "Cadastro cancelado.");
             }
+        } else {
+            System.out.println("Cadastro cancelado.");
         }
     }
 

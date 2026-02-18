@@ -37,6 +37,7 @@ public class Biblioteca {
     }
 
     public void listarTodosLivros() {
+        System.out.println("Listar Todos os Livros:");
         listaLivros.forEach(this::imprimirDetalhesLivro);
     }
 
@@ -103,7 +104,7 @@ public class Biblioteca {
         if(livrosDisponiveis.isEmpty()) {
             System.out.println("Não há livros disponíveis para empréstimo.");
         } else {
-            System.out.println("Livros Disponíveis:");
+            System.out.println("\nLivros Disponíveis:");
             livrosDisponiveis.forEach(this::imprimirDetalhesLivro);
         }
     }
@@ -113,9 +114,9 @@ public class Biblioteca {
                 .filter(Livro::isEmprestado)
                 .toList();
         if(livrosEmprestados.isEmpty()) {
-            System.out.println("Todos os livros estão disponíveis para empréstimo.");
+            System.out.println("\nTodos os livros estão disponíveis para empréstimo.");
         } else {
-            System.out.println("Livros Emprestados:");
+            System.out.println("\nLivros Emprestados:");
             livrosEmprestados.forEach(this::imprimirDetalhesLivro);
         }
     }
@@ -149,6 +150,7 @@ public class Biblioteca {
     }
 
     public void listarTodosUsuarios() {
+        System.out.println("\nListar Todos os Usuários:");
         listaUsuarios.forEach((email, usuario) -> imprimirDetalhesUsuario(usuario));
     }
 
