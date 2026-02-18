@@ -74,8 +74,6 @@ O código está organizado nos seguintes pacotes:
 
 ## ▶️ Como Executar
 
-## ▶️ Como Executar
-
 1. Certifique-se de ter o **JDK 21** ou superior instalado em sua máquina.
 2. Clone este repositório em seu terminal utilizando o Git:
    ```bash
