@@ -55,12 +55,14 @@ public class Emprestimo implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Emprestimo that = (Emprestimo) o;
-        return Objects.equals(usuario, that.usuario) && Objects.equals(livro, that.livro) && Objects.equals(diaEmprestimo, that.diaEmprestimo) && Objects.equals(diaDevolucao, that.diaDevolucao);
+        return Objects.equals(usuario, that.usuario) &&
+                Objects.equals(livro, that.livro) &&
+                Objects.equals(diaEmprestimo, that.diaEmprestimo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(usuario, livro, diaEmprestimo, diaDevolucao);
+        return Objects.hash(usuario, livro, diaEmprestimo);
     }
 
     @Override

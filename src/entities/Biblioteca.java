@@ -227,6 +227,19 @@ public class Biblioteca {
         System.out.printf("\n-=- Foi realizado o empréstimo do livro %s para o usuário %s! -=-\n",emprestimo.getLivro().getTitulo(),emprestimo.getUsuario().getNome());
     }
 
+    public HashSet<Emprestimo> retornarEmprestimoAtivosUsuario(Usuario usuario) throws EmprestimoNaoRegistradoException {
+        HashSet<Emprestimo> conjuntoTemp = (HashSet<Emprestimo>) conjuntoEmprestimo.stream()
+                .filter(e->e.getUsuario().equals(usuario))
+                .filter(e->!e.foiDevolvido())
+                .collect(Collectors.toSet());
+
+        if(conjuntoTemp.isEmpty()) {
+            throw new EmprestimoNaoRegistradoException("Esse usuário não tem nenhum empréstimo ativo.");
+        } else {
+            return conjuntoTemp;
+        }
+    }
+
     public Emprestimo buscarEmprestimoAtivo(Usuario usuario, Livro livro) {
         return conjuntoEmprestimo.stream()
                 .filter(e->e.getUsuario().equals(usuario) && e.getLivro().equals(livro) && e.getDiaDevolucao() == null)
@@ -234,8 +247,8 @@ public class Biblioteca {
                 .orElse(null);
     }
 
-    public void devolverLivro(Usuario usuario, Livro livro, LocalDateTime date) throws EmprestimoNaoRegistradoException {
-        Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(usuario, livro);
+    public void devolverLivro(Emprestimo emprestimo, LocalDateTime date) throws EmprestimoNaoRegistradoException {
+        Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(emprestimo.getUsuario(), emprestimo.getLivro());
         if(emprestimoOriginal == null) {
             throw new EmprestimoNaoRegistradoException("Não foi encontrado um empréstimo ativo deste livro para este usuário.");
         }

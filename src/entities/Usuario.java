@@ -54,7 +54,7 @@ public class Usuario implements Serializable{
     
     public void devolverEmprestimo(Emprestimo emprestimo, LocalDateTime date) {
         livrosPegosPorEmprestimo.stream()
-                        .filter(e->e.getLivro() == emprestimo.getLivro() && e.getLivro().isEmprestado())
+                        .filter(e->e.getLivro().equals(emprestimo.getLivro()) && e.getLivro().isEmprestado())
                                 .forEach(e-> {
                                     e.getLivro().setEmprestado(false);
                                     e.setDiaDevolucao(date);
