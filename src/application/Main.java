@@ -63,32 +63,16 @@ public class Main {
                 cadastrarNovoLivro();
                 break;
             case 2:
-                if(biblioteca.listaLivrosEstaVazia()) {
-                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
-                    break;
-                }
                 menuListaLivros();
                 break;
             case 3:
-                if(biblioteca.listaLivrosEstaVazia()) {
-                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
-                    break;
-                }
                 ordenarLivros();
                 break;
             case 4:
-                if(biblioteca.listaLivrosEstaVazia()) {
-                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
-                    break;
-                }
                 buscarLivroPorTitulo();
                 break;
             case 5:
-                if(biblioteca.listaLivrosEstaVazia()) {
-                    System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
-                    break;
-                }
-                biblioteca.agruparLivrosPorAutor();
+                agruparLivrosPorAutor();
                 break;
             case 6:
                 return;
@@ -101,19 +85,26 @@ public class Main {
         System.out.println("\n-=- Cadastrar um Novo Livro -=-");
         String tituloLivro = verificadorStringVazio("Digite o título do livro: ");
         String autorLivro = verificadorStringVazio("Digite o autor do livro: ");
-        int anoLancamentoLivro = verificadorInt("Digite o ano que o livro foi publicado: ");
-        Livro novoLivro = new Livro(tituloLivro, autorLivro, anoLancamentoLivro);
+        int anoPublicacaoLivro = verificadorAnoPublicacao("Digite o ano que o livro foi publicado: ");
+        Livro novoLivro = new Livro(tituloLivro, autorLivro, anoPublicacaoLivro);
 
         System.out.println("\n-=- Livro -=-");
         System.out.println(novoLivro);
         if(verificarConfirmacao("\nDeseja cadastrar esse livro na biblioteca? (s/n) ")) {
-            biblioteca.cadastrarNovoLivro(novoLivro);
-        } else {
-            System.out.println("Cadastro cancelado.");
+            try {
+                biblioteca.cadastrarNovoLivro(novoLivro);
+            } catch (LivroJaExisteException e) {
+                System.out.println("Erro: " + e.getMessage());
+                System.out.println("Cadastro cancelado.");
+            }
         }
     }
 
     public static void menuListaLivros() {
+        if(biblioteca.listaLivrosEstaVazia()) {
+            System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+            return;
+        }
         int opcaoUsuario = 0;
         do {
             System.out.println("\n-=- Listar os Livros -=-");
@@ -155,6 +146,10 @@ public class Main {
     }
 
     public static void ordenarLivros() {
+        if(biblioteca.listaLivrosEstaVazia()) {
+            System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+            return;
+        }
         int opcaoUsuario = 0;
         do {
             System.out.println("\n-=- Ordenar os Livros -=-");
@@ -180,6 +175,10 @@ public class Main {
     }
 
     public static void buscarLivroPorTitulo() {
+        if(biblioteca.listaLivrosEstaVazia()) {
+            System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+            return;
+        }
         System.out.println("\n-=- Buscar Livro por Título -=-");
         String tituloLivro = verificadorStringVazio("Digite o título do livro: ");
         try {
@@ -187,6 +186,14 @@ public class Main {
         } catch(LivroNaoEncontradoException e ) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void agruparLivrosPorAutor() {
+        if(biblioteca.listaLivrosEstaVazia()) {
+            System.out.println("A biblioteca não tem livros cadastrados. Adicione um livro para utilizar essa opção.");
+            return;
+        }
+        biblioteca.agruparLivrosPorAutor();
     }
 
     public static void menuGestaoUsuarios() {
@@ -205,17 +212,9 @@ public class Main {
                 cadastrarNovoUsuario();
                 break;
             case 2:
-                if(biblioteca.listaUsuariosEstaVazia()) {
-                    System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
-                    break;
-                }
-                biblioteca.listarTodosUsuarios();
+                listarTodosUsuarios();
                 break;
             case 3:
-                if(biblioteca.listaUsuariosEstaVazia()) {
-                    System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
-                    break;
-                }
                 buscarUsuarioPorEmail();
                 break;
             case 4:
@@ -225,14 +224,14 @@ public class Main {
         }
     }
 
-    public static void cadastrarNovoUsuario() throws EmailJaExistenteException {
+    public static void cadastrarNovoUsuario() {
         System.out.println("\n-=- Cadastrar um Novo Usuário -=-");
         String nomeUsuario = verificadorStringVazio("Digite o nome do usuário: ");
         String emailUsuario = verificadorEmail("Digite o email do usuário: ");
 
         try {
             biblioteca.verificarEmail(emailUsuario);
-        } catch(EmailJaExistenteException e) {
+        } catch(EmailJaExisteException e) {
             System.out.println(e.getMessage());
             return;
         }
@@ -247,7 +246,19 @@ public class Main {
         }
     }
 
+    public static void listarTodosUsuarios() {
+        if(biblioteca.listaUsuariosEstaVazia()) {
+            System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
+            return;
+        }
+        biblioteca.listarTodosUsuarios();
+    }
+
     public static void buscarUsuarioPorEmail() {
+        if(biblioteca.listaUsuariosEstaVazia()) {
+            System.out.println("A biblioteca não tem usuários registrados. Adicione um usuário para utilizar essa opção.");
+            return;
+        }
         String emailBusca = verificadorEmail("Digite o email do usuário que deseja buscar: ");
         biblioteca.buscarEmail(emailBusca);
     }
@@ -256,39 +267,32 @@ public class Main {
         int opcaoUsuario = 0;
         do {
             System.out.println("\n-=- Empréstimos -=-");
-            System.out.println("1- Realizar Empréstimo.\n2- Devolver livro.\n3- Mostrar Histórico de Empréstimos.\n4- Voltar ao Menu Principal.\n");
+            System.out.println("1- Realizar Novo Empréstimo.\n2- Realizar Nova Devolução de livro.\n3- Registrar Empréstimo Antigo.\n4- Mostrar Histórico de Empréstimos.\n5- Voltar ao Menu Principal.\n");
             opcaoUsuario = verificadorInt("Digite uma das opções: ");
             opcaoMenuEmprestimos(opcaoUsuario);
-        } while(opcaoUsuario != 4);
+        } while(opcaoUsuario != 5);
     }
 
     public static void opcaoMenuEmprestimos(int opcaoUsuario) {
         switch(opcaoUsuario) {
             case 1:
-                if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
-                    System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Não é possível realizar um empréstimo.");
-                    break;
-                }
                 realizarEmprestimo();
                 break;
             case 2:
                 if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
                     System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Não é possível realizar uma devolução.");
-                    break;
+                    return;
                 }
                 System.out.println("TODO");
                 //TODO realizarDevolucao();
                 break;
             case 3:
-                if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
-                    System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Também não há empréstimos já realizados.");
-                } else if(biblioteca.conjuntoEmprestimosEstaVazia()) {
-                    System.out.println("Não há nenhum empréstimo registrado na livraria.");
-                } else {
-                    biblioteca.listarHistoricoEmprestimos();
-                }
+                //TODO
                 break;
             case 4:
+                listarHistoricoEmprestimo();
+                break;
+            case 5:
                 return;
             default:
                 System.out.println("Opção inválida, tente novamente.");
@@ -296,8 +300,23 @@ public class Main {
     }
 
     public static void realizarEmprestimo() {
-        System.out.println("\n-=- Realizar Empréstimo -=-");
-        System.out.println("TODO");
+        if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
+            System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Não é possível realizar um empréstimo.");
+        } else {
+            System.out.println("\n-=- Realizar Empréstimo -=-");
+            //TODO
+        }
+    }
+
+    public static void listarHistoricoEmprestimo() {
+        if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
+            System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Também não há empréstimos já realizados.");
+        } else if(biblioteca.conjuntoEmprestimosEstaVazia()) {
+            System.out.println("Não há nenhum empréstimo registrado na livraria.");
+        } else {
+            System.out.println("\n-=- Histórico de Empréstimos -=-");
+            biblioteca.listarHistoricoEmprestimos();
+        }
     }
 
     public static int verificadorInt(String mensagem) {
@@ -327,6 +346,14 @@ public class Main {
                 System.out.println(e.getMessage() + "\n");
             }
         }
+    }
+
+    public static int verificadorAnoPublicacao(String mensagem) {
+        int anoPublicacaoLivro = verificadorInt(mensagem);
+        while(anoPublicacaoLivro == 0) {
+            anoPublicacaoLivro = verificadorInt("Não existe ano 0.\nDigite o ano que o livro foi publicado: ");
+        }
+        return anoPublicacaoLivro;
     }
 
     public static boolean verificarConfirmacao(String mensagem) {

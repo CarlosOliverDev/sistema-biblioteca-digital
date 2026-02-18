@@ -1,9 +1,8 @@
 package entities;
 
 import exceptions.*;
-
 import java.io.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,9 +27,9 @@ public class Biblioteca {
         return conjuntoEmprestimo;
     }
 
-    public void cadastrarNovoLivro(Livro novoLivro) {
+    public void cadastrarNovoLivro(Livro novoLivro) throws LivroJaExisteException {
         if(listaLivros.contains(novoLivro)) {
-            System.out.println("Foi adicionado outra cópia do livro na biblioteca!");
+            throw new LivroJaExisteException("Esse livro já existe na biblioteca.");
         } else {
             System.out.println("Esse livro foi adicionado na biblioteca!");
         }
@@ -81,122 +80,6 @@ public class Biblioteca {
                 .forEach(this::imprimirDetalhesLivro);
     }
 
-    public boolean listaLivrosEstaVazia() {
-        return listaLivros.isEmpty();
-    }
-
-    public void cadastrarNovoUsuario(Usuario novoUsuario) throws EmailJaExistenteException {
-        verificarEmail(novoUsuario.getEmail());
-        System.out.println("Novo usuário cadastrado!");
-        listaUsuarios.put(novoUsuario.getEmail(),novoUsuario);
-    }
-
-    public void verificarEmail(String email) throws EmailJaExistenteException {
-        if(listaUsuarios.containsKey(email)) {
-            throw new EmailJaExistenteException("Já existe um usuário utilizando esse email.");
-        }
-    }
-
-    public void listarTodosUsuarios() {
-        listaUsuarios.forEach((email, usuario) -> imprimirDetalhesUsuario(usuario));
-    }
-
-    public void imprimirDetalhesUsuario(Usuario usuario) {
-        System.out.println("=-=-=-=-=-=");
-        System.out.println("Usuário: \n" + usuario);
-        System.out.println("=-=-=-=-=-=");
-        if(usuario.existemLivrosPorEmprestimo()) {
-            System.out.println("Usuário tem empréstimos de livros feitos.");
-        } else {
-            System.out.println("Usuário ainda não pegou um livro emprestado.");
-        }
-        System.out.println("=-=-=-=-=-=");
-    }
-
-    public boolean listaUsuariosEstaVazia() {
-        return listaUsuarios.isEmpty();
-    }
-
-    private void verificarLivroEstaEmprestado(Livro livro) throws LivroIndisponivelException {
-        if(livro.isEmprestado()) {
-            throw new LivroIndisponivelException("Esse livro está indisponível para empréstimo.");
-        }
-        System.out.println("Livro disponível para empréstimo!");
-    }
-
-    private void verificarUsuarioTemEsseLivro(Usuario usuario, Livro livro) throws EmprestimoDuplicadoException {
-        if(usuario.contemLivro(livro)) {
-            throw new EmprestimoDuplicadoException("Esse usuário já tem esse livro por empréstimo.");
-        }
-        System.out.println("O usuário pode pegar esse livro por empréstimo!");
-    }
-
-    public void realizarEmprestimo(Emprestimo emprestimo) throws LivroIndisponivelException, EmprestimoDuplicadoException {
-        verificarLivroEstaEmprestado(emprestimo.getLivro());
-        verificarUsuarioTemEsseLivro(emprestimo.getUsuario(),emprestimo.getLivro());
-
-        emprestimo.getLivro().setEmprestado(true);
-        emprestimo.getUsuario().adicionarNovoEmprestimo(emprestimo);
-
-        conjuntoEmprestimo.add(emprestimo);
-        System.out.printf("Foi realizado o empréstimo do livro %s para o usuário %s!\n",emprestimo.getLivro().getTitulo(),emprestimo.getUsuario().getNome());
-    }
-
-    public Emprestimo buscarEmprestimoAtivo(Usuario usuario, Livro livro) {
-        return conjuntoEmprestimo.stream()
-                .filter(e->e.getUsuario().equals(usuario) && e.getLivro().equals(livro) && e.getDiaDevolucao() == null)
-                .findFirst()
-                .orElse(null);
-    }
-
-    //TODO vou ter q mudar esse método para receber um livro e um usuário
-    public void devolverLivro(Emprestimo emprestimo, LocalDate date) throws EmprestimoNaoRegistradoException {
-        Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(emprestimo.getUsuario(), emprestimo.getLivro());
-        if(emprestimoOriginal == null) {
-            throw new EmprestimoNaoRegistradoException("Não foi encontrado um empréstimo ativo deste livro para este usuário.");
-        }
-        emprestimoOriginal.getUsuario().devolverEmprestimo(emprestimoOriginal, date);
-        emprestimoOriginal.getLivro().setEmprestado(false);
-        emprestimoOriginal.setDiaDevolucao(date);
-        System.out.println("O livro foi devolvido com sucesso!");
-    }
-
-    public boolean conjuntoEmprestimosEstaVazia() {
-        return conjuntoEmprestimo.isEmpty();
-    }
-
-    public void listarHistoricoEmprestimos() {
-        conjuntoEmprestimo.forEach(this::imprimirDetalheEmprestimos);
-    }
-
-    public void imprimirDetalheEmprestimos(Emprestimo emprestimo) {
-        System.out.println("=-=-=-=-=-=");
-        System.out.println("Usuário: \n" + emprestimo);
-        System.out.println("=-=-=-=-=-=");
-    }
-
-    public void listarLivrosAutor(String autor) throws AutorNaoEncontradoException {
-        List<Livro> livrosAutor = listaLivros.stream()
-                .filter(l->l.getAutor().equalsIgnoreCase(autor))
-                .toList();
-        if(livrosAutor.isEmpty()) {
-            throw new AutorNaoEncontradoException("Não foi encontrado nenhum livro escrito pelo autor " + autor + ".");
-        } else {
-            System.out.println("\nLivros de " + autor + " encontrados:");
-            livrosAutor.forEach(this::imprimirDetalhesLivro);
-        }
-    }
-
-    public void buscarEmail(String email) {
-        if(listaUsuarios.containsKey(email)) {
-            System.out.println("\nUsuário encontrado!");
-            System.out.println(listaUsuarios.get(email));
-        } else {
-            System.out.println("\nNão foi encontrado nenhum usuário com esse email.");
-            System.out.printf("Email %s disponível para uso.\n",email);
-        }
-    }
-
     public void agruparLivrosPorAutor() {
         Map<String, List<Livro>> grupoDeAutores= listaLivros.stream()
                 .collect(Collectors.groupingBy(Livro::getAutor));
@@ -236,6 +119,123 @@ public class Biblioteca {
             livrosEmprestados.forEach(this::imprimirDetalhesLivro);
         }
     }
+
+    public void listarLivrosAutor(String autor) throws AutorNaoEncontradoException {
+        List<Livro> livrosAutor = listaLivros.stream()
+                .filter(l->l.getAutor().equalsIgnoreCase(autor))
+                .toList();
+        if(livrosAutor.isEmpty()) {
+            throw new AutorNaoEncontradoException("Não foi encontrado nenhum livro escrito pelo autor " + autor + ".");
+        } else {
+            System.out.println("\nLivros de " + autor + " encontrados:");
+            livrosAutor.forEach(this::imprimirDetalhesLivro);
+        }
+    }
+
+    public boolean listaLivrosEstaVazia() {
+        return listaLivros.isEmpty();
+    }
+
+    public void cadastrarNovoUsuario(Usuario novoUsuario) throws EmailJaExisteException {
+        verificarEmail(novoUsuario.getEmail());
+        System.out.println("Novo usuário cadastrado!");
+        listaUsuarios.put(novoUsuario.getEmail(),novoUsuario);
+    }
+
+    public void verificarEmail(String email) throws EmailJaExisteException {
+        if(listaUsuarios.containsKey(email)) {
+            throw new EmailJaExisteException("Já existe um usuário utilizando esse email.");
+        }
+    }
+
+    public void listarTodosUsuarios() {
+        listaUsuarios.forEach((email, usuario) -> imprimirDetalhesUsuario(usuario));
+    }
+
+    public void imprimirDetalhesUsuario(Usuario usuario) {
+        System.out.println("=-=-=-=-=-=");
+        System.out.println("Usuário: \n" + usuario);
+        System.out.println("=-=-=-=-=-=");
+        if(usuario.existemLivrosPorEmprestimo()) {
+            System.out.println("Usuário tem empréstimos de livros feitos.");
+        } else {
+            System.out.println("Usuário ainda não pegou um livro emprestado.");
+        }
+        System.out.println("=-=-=-=-=-=");
+    }
+
+    public void buscarEmail(String email) {
+        if(listaUsuarios.containsKey(email)) {
+            System.out.println("\nUsuário encontrado!");
+            System.out.println(listaUsuarios.get(email));
+        } else {
+            System.out.println("\nNão foi encontrado nenhum usuário com esse email.");
+        }
+    }
+
+    public boolean listaUsuariosEstaVazia() {
+        return listaUsuarios.isEmpty();
+    }
+
+    //TODO Emprestimos
+    private void verificarLivroEstaEmprestado(Livro livro) throws LivroIndisponivelException {
+        if(livro.isEmprestado()) {
+            throw new LivroIndisponivelException("Esse livro está indisponível para empréstimo.");
+        }
+        System.out.println("Livro disponível para empréstimo!");
+    }
+
+    private void verificarUsuarioTemEsseLivro(Usuario usuario, Livro livro) throws EmprestimoDuplicadoException {
+        if(usuario.contemLivro(livro)) {
+            throw new EmprestimoDuplicadoException("Esse usuário já tem esse livro por empréstimo.");
+        }
+        System.out.println("O usuário pode pegar esse livro por empréstimo!");
+    }
+
+    public void realizarEmprestimo(Emprestimo emprestimo) throws LivroIndisponivelException, EmprestimoDuplicadoException {
+        verificarLivroEstaEmprestado(emprestimo.getLivro());
+        verificarUsuarioTemEsseLivro(emprestimo.getUsuario(),emprestimo.getLivro());
+
+        emprestimo.getLivro().setEmprestado(true);
+        emprestimo.getUsuario().adicionarNovoEmprestimo(emprestimo);
+
+        conjuntoEmprestimo.add(emprestimo);
+        System.out.printf("Foi realizado o empréstimo do livro %s para o usuário %s!\n",emprestimo.getLivro().getTitulo(),emprestimo.getUsuario().getNome());
+    }
+
+    public Emprestimo buscarEmprestimoAtivo(Usuario usuario, Livro livro) {
+        return conjuntoEmprestimo.stream()
+                .filter(e->e.getUsuario().equals(usuario) && e.getLivro().equals(livro) && e.getDiaDevolucao() == null)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void devolverLivro(Usuario usuario, Livro livro, LocalDateTime date) throws EmprestimoNaoRegistradoException {
+        Emprestimo emprestimoOriginal = buscarEmprestimoAtivo(usuario, livro);
+        if(emprestimoOriginal == null) {
+            throw new EmprestimoNaoRegistradoException("Não foi encontrado um empréstimo ativo deste livro para este usuário.");
+        }
+        emprestimoOriginal.getUsuario().devolverEmprestimo(emprestimoOriginal, date);
+        emprestimoOriginal.getLivro().setEmprestado(false);
+        emprestimoOriginal.setDiaDevolucao(date);
+        System.out.println("O livro foi devolvido com sucesso!");
+    }
+
+    public void listarHistoricoEmprestimos() {
+        conjuntoEmprestimo.forEach(this::imprimirDetalheEmprestimos);
+    }
+
+    public void imprimirDetalheEmprestimos(Emprestimo emprestimo) {
+        System.out.println("=-=-=-=-=-=");
+        System.out.println("Usuário: \n" + emprestimo);
+        System.out.println("=-=-=-=-=-=");
+    }
+
+    public boolean conjuntoEmprestimosEstaVazia() {
+        return conjuntoEmprestimo.isEmpty();
+    }
+    //TODO Emprestimos
+
 
     private ArrayList<Livro> carregarDadosLivros() {
         System.out.println("Carregando arquivo de livros...");
@@ -324,6 +324,6 @@ public class Biblioteca {
     public void salvarTodosDados() {
         salvarDadosLivros();
         salvarDadosUsuarios();
-        //salvarDadosEmprestimos();
+        salvarDadosEmprestimos();
     }
 }

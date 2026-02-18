@@ -2,7 +2,7 @@ package entities;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -52,7 +52,7 @@ public class Usuario implements Serializable{
         livrosPegosPorEmprestimo.add(emprestimo);
     }
     
-    public void devolverEmprestimo(Emprestimo emprestimo, LocalDate date) {
+    public void devolverEmprestimo(Emprestimo emprestimo, LocalDateTime date) {
         livrosPegosPorEmprestimo.stream()
                         .filter(e->e.getLivro() == emprestimo.getLivro() && e.getLivro().isEmprestado())
                                 .forEach(e-> {

@@ -47,6 +47,13 @@ public class Livro implements Serializable, Comparable<Livro> {
         this.emprestado = emprestado;
     }
 
+    public String stringAnoPublicado() {
+        if(anoPublicado >= 1 ) {
+            return Integer.toString(anoPublicado);
+        }
+        return Math.abs(anoPublicado) + " a.C.";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -63,7 +70,7 @@ public class Livro implements Serializable, Comparable<Livro> {
     public String toString() {
         return "Título: " + titulo +
                 "\nAutor: " + autor +
-                "\nAno de Publicação: " + anoPublicado;
+                "\nAno de Publicação: " + stringAnoPublicado();
     }
 
     @Override

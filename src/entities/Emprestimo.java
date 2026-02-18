@@ -2,7 +2,7 @@ package entities;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Emprestimo implements Serializable {
@@ -11,10 +11,10 @@ public class Emprestimo implements Serializable {
 
     private final Usuario usuario;
     private final Livro livro;
-    private final LocalDate diaEmprestimo;
-    private LocalDate diaDevolucao;
+    private final LocalDateTime diaEmprestimo;
+    private LocalDateTime diaDevolucao;
 
-    public Emprestimo(Usuario usuario, Livro livro, LocalDate diaEmprestimo) {
+    public Emprestimo(Usuario usuario, Livro livro, LocalDateTime diaEmprestimo) {
         this.usuario = usuario;
         this.livro = livro;
         this.diaEmprestimo = diaEmprestimo;
@@ -26,14 +26,14 @@ public class Emprestimo implements Serializable {
     public Livro getLivro() {
         return livro;
     }
-    public LocalDate getDiaEmprestimo() {
+    public LocalDateTime getDiaEmprestimo() {
         return diaEmprestimo;
     }
 
-    public LocalDate getDiaDevolucao() {
+    public LocalDateTime getDiaDevolucao() {
         return diaDevolucao;
     }
-    public void setDiaDevolucao(LocalDate diaDevolucao) {
+    public void setDiaDevolucao(LocalDateTime diaDevolucao) {
         this.diaDevolucao = diaDevolucao;
     }
 
