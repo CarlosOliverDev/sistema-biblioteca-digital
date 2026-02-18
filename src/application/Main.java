@@ -1,11 +1,14 @@
 package application;
 
 import entities.Biblioteca;
+import entities.Emprestimo;
 import entities.Livro;
 import entities.Usuario;
 import exceptions.*;
 
+import java.time.LocalDateTime;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -261,7 +264,11 @@ public class Main {
             return;
         }
         String emailBusca = verificadorEmail("Digite o email do usuário que deseja buscar: ");
-        biblioteca.buscarEmail(emailBusca);
+        try {
+            biblioteca.buscarEmail(emailBusca);
+        } catch (EmailInvalidoException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void menuEmprestimos() {
@@ -304,8 +311,41 @@ public class Main {
         if(biblioteca.listaLivrosEstaVazia() || biblioteca.listaUsuariosEstaVazia()) {
             System.out.println("A biblioteca não tem livros cadastrados ou não tem usuários registrados. Não é possível realizar um empréstimo.");
         } else {
-            System.out.println("\n-=- Realizar Empréstimo -=-");
-            //TODO
+            try {
+                System.out.println("\n-=- Realizar Empréstimo -=-");
+                String emailUsuario = verificadorEmail("Digite o Email do Usuário: ");
+                biblioteca.buscarEmail(emailUsuario);
+
+                System.out.println();
+                Usuario usuario = biblioteca.retornarUsuarioPorEmail(emailUsuario);
+
+                String tituloLivro = verificadorStringVazio("Digite o Título do livro: ");
+
+                biblioteca.buscarLivroPorTitulo(tituloLivro);
+                List<Livro> listaLivrosBuscados = biblioteca.retornarListaLivrosPorTitulo(tituloLivro);
+                Livro livro = null;
+
+                if(listaLivrosBuscados.size() > 1) {
+                    System.out.println();
+                    String autorLivro = verificadorStringVazio("Digite o Nome do Autor do livro: ");
+                    int anoPublicacaoLivro = verificadorAnoPublicacao("Digite o Ano de Publicação do livro: ");
+                    livro = biblioteca.retornarLivro(listaLivrosBuscados, autorLivro, anoPublicacaoLivro);
+                    biblioteca.imprimirDetalhesLivro(livro);
+                } else {
+                    livro = listaLivrosBuscados.getFirst();
+                }
+
+                System.out.println();
+                if(!verificarConfirmacao("Confirmar empréstimo desse livro? (s/n) ")) {
+                    System.out.println("Empréstimo cancelado.");
+                    return;
+                }
+
+                Emprestimo novoEmprestimo = new Emprestimo(usuario, livro, LocalDateTime.now());
+                biblioteca.realizarEmprestimo(novoEmprestimo);
+            } catch (EmailInvalidoException | LivroNaoEncontradoException | EmprestimoDuplicadoException | LivroIndisponivelException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 

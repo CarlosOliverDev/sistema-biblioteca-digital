@@ -37,7 +37,7 @@ public class Biblioteca {
     }
 
     public void listarTodosLivros() {
-        System.out.println("Listar Todos os Livros:");
+        System.out.println("\nListar Todos os Livros:");
         listaLivros.forEach(this::imprimirDetalhesLivro);
     }
 
@@ -166,12 +166,12 @@ public class Biblioteca {
         System.out.println("=-=-=-=-=-=");
     }
 
-    public void buscarEmail(String email) {
+    public void buscarEmail(String email) throws EmailInvalidoException {
         if(listaUsuarios.containsKey(email)) {
             System.out.println("\nUsuário encontrado!");
             System.out.println(listaUsuarios.get(email));
         } else {
-            System.out.println("\nNão foi encontrado nenhum usuário com esse email.");
+            throw new EmailInvalidoException("Não foi encontrado nenhum usuário com esse email.");
         }
     }
 
@@ -179,19 +179,41 @@ public class Biblioteca {
         return listaUsuarios.isEmpty();
     }
 
-    //TODO Emprestimos
+    public Usuario retornarUsuarioPorEmail(String email) throws EmailInvalidoException {
+        if(!listaUsuarios.containsKey(email)) {
+            throw new EmailInvalidoException("Não foi encontrado nenhum usuário com esse email.");
+        }
+        return listaUsuarios.get(email);
+    }
+
+    public List<Livro> retornarListaLivrosPorTitulo(String tituloBuscado) throws LivroNaoEncontradoException {
+        List<Livro> listaFiltrada = listaLivros.stream()
+                .filter(l -> l.getTitulo().toLowerCase().contains(tituloBuscado.toLowerCase()))
+                .toList();
+        if(listaFiltrada.isEmpty()) {
+            throw new LivroNaoEncontradoException("\nNenhum livro com esse nome foi encontrado na biblioteca.");
+        }
+        return listaFiltrada;
+    }
+
+    public Livro retornarLivro(List<Livro> lista, String autorLivro, int anoPublicado) throws LivroNaoEncontradoException {
+        return lista.stream()
+                .filter(l->!l.isEmprestado() && l.getAutor().equalsIgnoreCase(autorLivro) && l.getAnoPublicado() == anoPublicado)
+                .findAny()
+                .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado."));
+
+    }
+
     private void verificarLivroEstaEmprestado(Livro livro) throws LivroIndisponivelException {
         if(livro.isEmprestado()) {
             throw new LivroIndisponivelException("Esse livro está indisponível para empréstimo.");
         }
-        System.out.println("Livro disponível para empréstimo!");
     }
 
     private void verificarUsuarioTemEsseLivro(Usuario usuario, Livro livro) throws EmprestimoDuplicadoException {
         if(usuario.contemLivro(livro)) {
             throw new EmprestimoDuplicadoException("Esse usuário já tem esse livro por empréstimo.");
         }
-        System.out.println("O usuário pode pegar esse livro por empréstimo!");
     }
 
     public void realizarEmprestimo(Emprestimo emprestimo) throws LivroIndisponivelException, EmprestimoDuplicadoException {
@@ -202,7 +224,7 @@ public class Biblioteca {
         emprestimo.getUsuario().adicionarNovoEmprestimo(emprestimo);
 
         conjuntoEmprestimo.add(emprestimo);
-        System.out.printf("Foi realizado o empréstimo do livro %s para o usuário %s!\n",emprestimo.getLivro().getTitulo(),emprestimo.getUsuario().getNome());
+        System.out.printf("\n-=- Foi realizado o empréstimo do livro %s para o usuário %s! -=-\n",emprestimo.getLivro().getTitulo(),emprestimo.getUsuario().getNome());
     }
 
     public Emprestimo buscarEmprestimoAtivo(Usuario usuario, Livro livro) {
@@ -224,12 +246,13 @@ public class Biblioteca {
     }
 
     public void listarHistoricoEmprestimos() {
+        System.out.println("-=- Histórico de Empréstimos -=-");
         conjuntoEmprestimo.forEach(this::imprimirDetalheEmprestimos);
     }
 
     public void imprimirDetalheEmprestimos(Emprestimo emprestimo) {
-        System.out.println("=-=-=-=-=-=");
-        System.out.println("Usuário: \n" + emprestimo);
+        System.out.println("\n=-=-=Empréstimo=-=-=");
+        System.out.println(emprestimo);
         System.out.println("=-=-=-=-=-=");
     }
 
