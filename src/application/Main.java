@@ -358,10 +358,12 @@ public class Main {
             HashSet<Emprestimo> conjuntoEmprestimosAtivos = biblioteca.retornarEmprestimoAtivosUsuario(usuario);
 
             if(conjuntoEmprestimosAtivos.size() == 1) {
+                System.out.println("Foi identificado 1 empréstimo ativo nesse usuário:");
                 emprestimoAlvo = conjuntoEmprestimosAtivos.iterator().next();
             } else {
                 System.out.println("O usuário possui " + conjuntoEmprestimosAtivos.size() + " empréstimos ativos.");
-                String tituloBusca = verificadorStringVazio("Digite o Título exato do livro: ");
+                conjuntoEmprestimosAtivos.forEach(e->biblioteca.imprimirDetalheEmprestimos(e));
+                String tituloBusca = verificadorStringVazio("\nDigite o Título exato do livro: ");
                 emprestimoAlvo = conjuntoEmprestimosAtivos.stream()
                         .filter(e -> e.getLivro().getTitulo().equalsIgnoreCase(tituloBusca))
                         .findFirst()

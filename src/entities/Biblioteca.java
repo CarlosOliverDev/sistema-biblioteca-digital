@@ -254,8 +254,15 @@ public class Biblioteca {
         }
         emprestimoOriginal.getUsuario().devolverEmprestimo(emprestimoOriginal, date);
         emprestimoOriginal.getLivro().setEmprestado(false);
+        devolverLivro(emprestimoOriginal.getLivro());
         emprestimoOriginal.setDiaDevolucao(date);
         System.out.println("O livro foi devolvido com sucesso!");
+    }
+
+    public void devolverLivro(Livro livro) {
+        listaLivros.stream()
+                .filter(l->l.equals(livro))
+                .forEach(l->l.setEmprestado(false));
     }
 
     public void listarHistoricoEmprestimos() {
